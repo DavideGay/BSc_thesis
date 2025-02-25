@@ -1,0 +1,121 @@
+log SA_log.lammps
+units micro
+dimension 2
+atom_style bond
+bond_style harmonic
+boundary p p p
+read_data colloid.lmpdat
+bond_coeff 1 1.000000e-07 5.80    # <---- a_coll
+group internal type 1
+group external type 2
+compute Getx all property/atom x
+compute Gety all property/atom y
+variable c equal 2*PI/5.40       # <---- a_pot
+#---------- Define G, V0, F -----------------------------------------------------------------------#
+variable G1_x equal ${c}*(cos(0)-cos(2*PI/5))   # i valori sono gli stessi per G1, G4, G5, G17
+variable G1_y equal ${c}*(sin(2*PI/5)-sin(0))
+variable G2_x equal ${c}*(cos(0)-cos(4*PI/5))   # idem per G2, +G3, G9, G13
+variable G2_y equal ${c}*(sin(4*PI/5)-sin(0))
+variable G6_x equal ${c}*(cos(2*PI/5)-cos(4*PI/5))
+variable G6_y equal ${c}*(sin(2*PI/5)-sin(4*PI/5))    # hanno anche Gy uguale G10,G16,G20
+variable G7_x equal ${G6_x}
+variable G7_y equal ${c}*(sin(2*PI/5)-sin(6*PI/5))    # Gx uguale al gruppo di G6, mentre
+variable G8_x equal 0.0 # Gx uguale G8 G18 G11 G15 #sarebbe 0
+variable G8_y equal ${c}*(sin(2*PI/5)-sin(8*PI/5))   # G8 e G18 sulle y
+variable G11_y equal ${c}*(sin(4*PI/5)-sin(6*PI/5))  # G11 e G15 sulle y
+# ----- POTENTIAL AMP: V_0=1e-07 is 0.1zJ ----- #
+variable g equal 0.1
+variable V0 equal v_g*2.0e-07*(5.80^2)
+# variable V0 equal 1.0e-7
+variable pot_ext atom $(-2/25)*${V0}*(cos(${G1_x}*c_Getx+${G1_y}*c_Gety)+cos(${G1_x}*c_Getx-${G1_y}*c_Gety)&
++cos(${G2_x}*c_Getx+${G2_y}*c_Gety)+cos(${G2_x}*c_Getx-${G2_y}*c_Gety)&
++cos(${G6_x}*c_Getx+${G6_y}*c_Gety)+cos(${G6_x}*c_Getx-${G6_y}*c_Gety)&
++cos(${G7_x}*c_Getx+${G7_y}*c_Gety)+cos(${G7_x}*c_Getx-${G7_y}*c_Gety)&
++cos(${G8_y}*c_Gety)+cos(${G11_y}*c_Gety))
+variable Fx atom $(-2/25)*${V0}*(${G1_x}*(sin(${G1_x}*c_Getx+${G1_y}*c_Gety)+sin(${G1_x}*c_Getx-${G1_y}*c_Gety))&
++${G2_x}*(sin(${G2_x}*c_Getx+${G2_y}*c_Gety)+sin(${G2_x}*c_Getx-${G2_y}*c_Gety))&
++${G6_x}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)+sin(${G6_x}*c_Getx-${G6_y}*c_Gety))&
++${G7_x}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fy atom $(-2/25)*${V0}*(${G1_y}*(sin(${G1_x}*c_Getx+${G1_y}*c_Gety)-sin(${G1_x}*c_Getx-${G1_y}*c_Gety))&
++${G2_y}*(sin(${G2_x}*c_Getx+${G2_y}*c_Gety)-sin(${G2_x}*c_Getx-${G2_y}*c_Gety))&
++${G6_y}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)-sin(${G6_x}*c_Getx-${G6_y}*c_Gety))&
++${G7_y}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))&
++${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+#---------- Forces --------------------------------------------------------------------------------#
+timestep 50  # microseconds
+# ----- rotate params: x y z (origin point) vx vy vz (rotation axis vector) angle -----#
+displace_atoms all rotate 0.0 0.0 0.0 0.0 0.0 1.0 5.3054196
+fix subForce internal addforce v_Fx v_Fy 0.0 energy v_pot_ext   # force field due to substrate potential
+fix_modify subForce energy yes
+fix edgeForce external setforce 0.0 0.0 0.0   # zero force applied on external
+#---------- Compute variables ---------------------------------------------------------------------#
+compute pot_e all pe
+compute kin_e all ke
+variable etot equal c_pot_e+c_kin_e
+variable pote equal c_pot_e
+variable tstep equal step
+compute my_temp internal temp/partial 1 1 0
+variable temperat equal temp
+variable T1 equal 2*v_g*5.9*5.8/1.38   # =0.1*V_0/k_B ; rewrite this if changes to k or a_coll are made (best to write them as variables)
+variable T2 equal 2*v_g*5.9*5.8/1.38/5   # =0.02*V_0/k_B
+#---------- thermo outputs ------------------------------------------------------------------------#
+thermo_style custom step c_my_temp pe etotal
+thermo 100
+#---------- Dump compatible with ovito animations -------------------------------------------------#
+# dump 10000 all custom 100 dump_test_* id type xs ys zs vx vy vz
+#---------- Run -----------------------------------------------------------------------------------#
+# write_data starting_config.lmpdat
+
+fix eq_langevin internal langevin ${T1} ${T1} 1000 1    # fix ID group_ID langevin Tstart Tstop damp seed
+fix_modify eq_langevin temp my_temp
+fix eq_int internal nve
+#fix SA_out all print 1 "${tstep} ${temperat} ${pote} ${etot}" file SA.data screen no
+run 50000
+
+unfix eq_langevin
+unfix eq_int
+fix SA1_langevin internal langevin ${T1} ${T2} 5000 1    # fix ID group_ID langevin Tstart Tstop damp seed
+fix_modify SA1_langevin temp my_temp
+fix SA1_int internal nve
+run 100000
+
+unfix SA1_langevin
+unfix SA1_int
+fix SA2_langevin internal langevin ${T2} 0.0 5000 1    # fix ID group_ID langevin Tstart Tstop damp seed
+fix_modify SA2_langevin temp my_temp
+fix SA2_int internal nve
+run 100000
+
+# write_data annealed_config.data
+
+timestep 500
+variable forceTolerance equal 1e-4*${V0}/5.4   # can choose stopping threshold
+min_style fire
+minimize 0.0 ${forceTolerance} 100000 100000
+# minimize 0.0 0.0 100000 100000
+write_data final_config.lmpdat
+
+
+# SIMULATED ANNEALING
+# Simulated Annealing helps finding a global minimum by heating the system up
+# to a temperature that allows it to overcome potential barriers
+# and explore configurations that would otherwise be unreachable by FIRE or similar algorithms.
+# The system is then cooled down 'slowly' to zero according to an annealing schedule.
+# This slow cooling allows the system to settle in the optimal configuration.
+#
+# The annealing schedule used here is a simple combination of:
+# - a relatively brief stable phase at T1 = 0.1 V_0/K_b
+# - a linear ramp from T1 = 0.1 V_0/K_b to T2 = 0.02 V_0/K_b
+# - a linear ramp T2 = 0.02 V_0/K_b to T=0
+# A FIRE run is performed at the end to reach the bottom of the newly found minimum.
+#
+# The chosen temperatures are supposed to let the system explore configurations
+# without becoming completely disordered.
+# The slope of the ramps is managed by tuning the 'run' time for each ramp.
+# Generally, the slower the better.
+# Ideally one could try with a 'geometric' schedule:
+# every N steps a new temperature T_(i+1)= c*T_(i) is calculated from previous temperature T_(i),
+# the value of c is best chosen to be 0.8 < c < 1.
+# A linear schedule is probably easier to implement in LAMMPS.
+# One should try testing different times to see if longer ramps improve results
+# (that are worth the increase in computational time) or add more ramps.

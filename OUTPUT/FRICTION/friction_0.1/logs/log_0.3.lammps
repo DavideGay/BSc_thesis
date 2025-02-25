@@ -1,0 +1,427 @@
+units micro
+dimension 2
+atom_style bond
+bond_style harmonic
+boundary p p p
+read_data start_config.lmpdat
+Reading data file ...
+  orthogonal box = (-893.2 -893.2 -5) to (893.2 893.2 5)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  9407 atoms
+  reading velocities ...
+  9407 velocities
+  scanning bonds ...
+  3 = max bonds/atom
+  orthogonal box = (-893.2 -893.2 -5) to (893.2 893.2 5)
+  1 by 1 by 1 MPI processor grid
+  reading bonds ...
+  27870 bonds
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        0       
+  special bond factors coul:  0        0        0       
+     6 = max # of 1-2 neighbors
+    30 = max # of 1-3 neighbors
+   180 = max # of 1-4 neighbors
+    36 = max # of special neighbors
+  special bonds CPU = 0.010 seconds
+  read_data CPU = 0.082 seconds
+bond_coeff 1 1.000000e-07 5.80    # <---- a_coll
+group internal type 1
+9061 atoms in group internal
+group external type 2
+346 atoms in group external
+compute Getx all property/atom x
+compute Gety all property/atom y
+variable c equal 2*PI/5.40       # <---- a_pot
+#---------- Define G, V0, F -----------------------------------------------------------------------#
+variable G1_x equal ${c}*(cos(0)-cos(2*PI/5))   # i valori sono gli stessi per G1, G4, G5, G17
+variable G1_x equal 1.16355283466289*(cos(0)-cos(2*PI/5))   
+variable G1_y equal ${c}*(sin(2*PI/5)-sin(0))
+variable G1_y equal 1.16355283466289*(sin(2*PI/5)-sin(0))
+variable G2_x equal ${c}*(cos(0)-cos(4*PI/5))   # idem per G2, +G3, G9, G13
+variable G2_x equal 1.16355283466289*(cos(0)-cos(4*PI/5))   
+variable G2_y equal ${c}*(sin(4*PI/5)-sin(0))
+variable G2_y equal 1.16355283466289*(sin(4*PI/5)-sin(0))
+variable G6_x equal ${c}*(cos(2*PI/5)-cos(4*PI/5))
+variable G6_x equal 1.16355283466289*(cos(2*PI/5)-cos(4*PI/5))
+variable G6_y equal ${c}*(sin(2*PI/5)-sin(4*PI/5))    # hanno anche Gy uguale G10,G16,G20
+variable G6_y equal 1.16355283466289*(sin(2*PI/5)-sin(4*PI/5))    
+variable G7_x equal ${G6_x}
+variable G7_x equal 1.3008916168594
+variable G7_y equal ${c}*(sin(2*PI/5)-sin(6*PI/5))    # Gx uguale al gruppo di G6, mentre
+variable G7_y equal 1.16355283466289*(sin(2*PI/5)-sin(6*PI/5))    
+variable G8_x equal 0.0 # Gx uguale G8 G18 G11 G15 #sarebbe 0
+variable G8_y equal ${c}*(sin(2*PI/5)-sin(8*PI/5))   # G8 e G18 sulle y
+variable G8_y equal 1.16355283466289*(sin(2*PI/5)-sin(8*PI/5))   
+variable G11_y equal ${c}*(sin(4*PI/5)-sin(6*PI/5))  # G11 e G15 sulle y
+variable G11_y equal 1.16355283466289*(sin(4*PI/5)-sin(6*PI/5))  
+# POTENTIAL AMP: 1e-07 is 0.1zJ
+variable g equal 0.1
+variable V0 equal v_g*2.0e-07*(5.80^2)
+# variable V0 equal 1.0e-7
+variable pot_ext atom $(-2/25)*${V0}*(cos(${G1_x}*c_Getx+${G1_y}*c_Gety)+cos(${G1_x}*c_Getx-${G1_y}*c_Gety)+cos(${G2_x}*c_Getx+${G2_y}*c_Gety)+cos(${G2_x}*c_Getx-${G2_y}*c_Gety)+cos(${G6_x}*c_Getx+${G6_y}*c_Gety)+cos(${G6_x}*c_Getx-${G6_y}*c_Gety)+cos(${G7_x}*c_Getx+${G7_y}*c_Gety)+cos(${G7_x}*c_Getx-${G7_y}*c_Gety)+cos(${G8_y}*c_Gety)+cos(${G11_y}*c_Gety))
+variable pot_ext atom -0.080000000000000001665*${V0}*(cos(${G1_x}*c_Getx+${G1_y}*c_Gety)+cos(${G1_x}*c_Getx-${G1_y}*c_Gety)+cos(${G2_x}*c_Getx+${G2_y}*c_Gety)+cos(${G2_x}*c_Getx-${G2_y}*c_Gety)+cos(${G6_x}*c_Getx+${G6_y}*c_Gety)+cos(${G6_x}*c_Getx-${G6_y}*c_Gety)+cos(${G7_x}*c_Getx+${G7_y}*c_Gety)+cos(${G7_x}*c_Getx-${G7_y}*c_Gety)+cos(${G8_y}*c_Gety)+cos(${G11_y}*c_Gety))
+variable pot_ext atom -0.080000000000000001665*6.728e-07*(cos(${G1_x}*c_Getx+${G1_y}*c_Gety)+cos(${G1_x}*c_Getx-${G1_y}*c_Gety)+cos(${G2_x}*c_Getx+${G2_y}*c_Gety)+cos(${G2_x}*c_Getx-${G2_y}*c_Gety)+cos(${G6_x}*c_Getx+${G6_y}*c_Gety)+cos(${G6_x}*c_Getx-${G6_y}*c_Gety)+cos(${G7_x}*c_Getx+${G7_y}*c_Gety)+cos(${G7_x}*c_Getx-${G7_y}*c_Gety)+cos(${G8_y}*c_Gety)+cos(${G11_y}*c_Gety))
+variable pot_ext atom -0.080000000000000001665*6.728e-07*(cos(0.803995234898914*c_Getx+${G1_y}*c_Gety)+cos(${G1_x}*c_Getx-${G1_y}*c_Gety)+cos(${G2_x}*c_Getx+${G2_y}*c_Gety)+cos(${G2_x}*c_Getx-${G2_y}*c_Gety)+cos(${G6_x}*c_Getx+${G6_y}*c_Gety)+cos(${G6_x}*c_Getx-${G6_y}*c_Gety)+cos(${G7_x}*c_Getx+${G7_y}*c_Gety)+cos(${G7_x}*c_Getx-${G7_y}*c_Gety)+cos(${G8_y}*c_Gety)+cos(${G11_y}*c_Gety))
+variable pot_ext atom -0.080000000000000001665*6.728e-07*(cos(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+cos(${G1_x}*c_Getx-${G1_y}*c_Gety)+cos(${G2_x}*c_Getx+${G2_y}*c_Gety)+cos(${G2_x}*c_Getx-${G2_y}*c_Gety)+cos(${G6_x}*c_Getx+${G6_y}*c_Gety)+cos(${G6_x}*c_Getx-${G6_y}*c_Gety)+cos(${G7_x}*c_Getx+${G7_y}*c_Gety)+cos(${G7_x}*c_Getx-${G7_y}*c_Gety)+cos(${G8_y}*c_Gety)+cos(${G11_y}*c_Gety))
+variable pot_ext atom -0.080000000000000001665*6.728e-07*(cos(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+cos(0.803995234898914*c_Getx-${G1_y}*c_Gety)+cos(${G2_x}*c_Getx+${G2_y}*c_Gety)+cos(${G2_x}*c_Getx-${G2_y}*c_Gety)+cos(${G6_x}*c_Getx+${G6_y}*c_Gety)+cos(${G6_x}*c_Getx-${G6_y}*c_Gety)+cos(${G7_x}*c_Getx+${G7_y}*c_Gety)+cos(${G7_x}*c_Getx-${G7_y}*c_Gety)+cos(${G8_y}*c_Gety)+cos(${G11_y}*c_Gety))
+variable pot_ext atom -0.080000000000000001665*6.728e-07*(cos(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+cos(0.803995234898914*c_Getx-1.10660450545984*c_Gety)+cos(${G2_x}*c_Getx+${G2_y}*c_Gety)+cos(${G2_x}*c_Getx-${G2_y}*c_Gety)+cos(${G6_x}*c_Getx+${G6_y}*c_Gety)+cos(${G6_x}*c_Getx-${G6_y}*c_Gety)+cos(${G7_x}*c_Getx+${G7_y}*c_Gety)+cos(${G7_x}*c_Getx-${G7_y}*c_Gety)+cos(${G8_y}*c_Gety)+cos(${G11_y}*c_Gety))
+variable pot_ext atom -0.080000000000000001665*6.728e-07*(cos(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+cos(0.803995234898914*c_Getx-1.10660450545984*c_Gety)+cos(2.10488685175831*c_Getx+${G2_y}*c_Gety)+cos(${G2_x}*c_Getx-${G2_y}*c_Gety)+cos(${G6_x}*c_Getx+${G6_y}*c_Gety)+cos(${G6_x}*c_Getx-${G6_y}*c_Gety)+cos(${G7_x}*c_Getx+${G7_y}*c_Gety)+cos(${G7_x}*c_Getx-${G7_y}*c_Gety)+cos(${G8_y}*c_Gety)+cos(${G11_y}*c_Gety))
+variable pot_ext atom -0.080000000000000001665*6.728e-07*(cos(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+cos(0.803995234898914*c_Getx-1.10660450545984*c_Gety)+cos(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+cos(${G2_x}*c_Getx-${G2_y}*c_Gety)+cos(${G6_x}*c_Getx+${G6_y}*c_Gety)+cos(${G6_x}*c_Getx-${G6_y}*c_Gety)+cos(${G7_x}*c_Getx+${G7_y}*c_Gety)+cos(${G7_x}*c_Getx-${G7_y}*c_Gety)+cos(${G8_y}*c_Gety)+cos(${G11_y}*c_Gety))
+variable pot_ext atom -0.080000000000000001665*6.728e-07*(cos(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+cos(0.803995234898914*c_Getx-1.10660450545984*c_Gety)+cos(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+cos(2.10488685175831*c_Getx-${G2_y}*c_Gety)+cos(${G6_x}*c_Getx+${G6_y}*c_Gety)+cos(${G6_x}*c_Getx-${G6_y}*c_Gety)+cos(${G7_x}*c_Getx+${G7_y}*c_Gety)+cos(${G7_x}*c_Getx-${G7_y}*c_Gety)+cos(${G8_y}*c_Gety)+cos(${G11_y}*c_Gety))
+variable pot_ext atom -0.080000000000000001665*6.728e-07*(cos(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+cos(0.803995234898914*c_Getx-1.10660450545984*c_Gety)+cos(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+cos(2.10488685175831*c_Getx-0.683919196477949*c_Gety)+cos(${G6_x}*c_Getx+${G6_y}*c_Gety)+cos(${G6_x}*c_Getx-${G6_y}*c_Gety)+cos(${G7_x}*c_Getx+${G7_y}*c_Gety)+cos(${G7_x}*c_Getx-${G7_y}*c_Gety)+cos(${G8_y}*c_Gety)+cos(${G11_y}*c_Gety))
+variable pot_ext atom -0.080000000000000001665*6.728e-07*(cos(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+cos(0.803995234898914*c_Getx-1.10660450545984*c_Gety)+cos(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+cos(2.10488685175831*c_Getx-0.683919196477949*c_Gety)+cos(1.3008916168594*c_Getx+${G6_y}*c_Gety)+cos(${G6_x}*c_Getx-${G6_y}*c_Gety)+cos(${G7_x}*c_Getx+${G7_y}*c_Gety)+cos(${G7_x}*c_Getx-${G7_y}*c_Gety)+cos(${G8_y}*c_Gety)+cos(${G11_y}*c_Gety))
+variable pot_ext atom -0.080000000000000001665*6.728e-07*(cos(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+cos(0.803995234898914*c_Getx-1.10660450545984*c_Gety)+cos(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+cos(2.10488685175831*c_Getx-0.683919196477949*c_Gety)+cos(1.3008916168594*c_Getx+0.42268530898189*c_Gety)+cos(${G6_x}*c_Getx-${G6_y}*c_Gety)+cos(${G7_x}*c_Getx+${G7_y}*c_Gety)+cos(${G7_x}*c_Getx-${G7_y}*c_Gety)+cos(${G8_y}*c_Gety)+cos(${G11_y}*c_Gety))
+variable pot_ext atom -0.080000000000000001665*6.728e-07*(cos(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+cos(0.803995234898914*c_Getx-1.10660450545984*c_Gety)+cos(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+cos(2.10488685175831*c_Getx-0.683919196477949*c_Gety)+cos(1.3008916168594*c_Getx+0.42268530898189*c_Gety)+cos(1.3008916168594*c_Getx-${G6_y}*c_Gety)+cos(${G7_x}*c_Getx+${G7_y}*c_Gety)+cos(${G7_x}*c_Getx-${G7_y}*c_Gety)+cos(${G8_y}*c_Gety)+cos(${G11_y}*c_Gety))
+variable pot_ext atom -0.080000000000000001665*6.728e-07*(cos(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+cos(0.803995234898914*c_Getx-1.10660450545984*c_Gety)+cos(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+cos(2.10488685175831*c_Getx-0.683919196477949*c_Gety)+cos(1.3008916168594*c_Getx+0.42268530898189*c_Gety)+cos(1.3008916168594*c_Getx-0.42268530898189*c_Gety)+cos(${G7_x}*c_Getx+${G7_y}*c_Gety)+cos(${G7_x}*c_Getx-${G7_y}*c_Gety)+cos(${G8_y}*c_Gety)+cos(${G11_y}*c_Gety))
+variable pot_ext atom -0.080000000000000001665*6.728e-07*(cos(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+cos(0.803995234898914*c_Getx-1.10660450545984*c_Gety)+cos(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+cos(2.10488685175831*c_Getx-0.683919196477949*c_Gety)+cos(1.3008916168594*c_Getx+0.42268530898189*c_Gety)+cos(1.3008916168594*c_Getx-0.42268530898189*c_Gety)+cos(1.3008916168594*c_Getx+${G7_y}*c_Gety)+cos(${G7_x}*c_Getx-${G7_y}*c_Gety)+cos(${G8_y}*c_Gety)+cos(${G11_y}*c_Gety))
+variable pot_ext atom -0.080000000000000001665*6.728e-07*(cos(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+cos(0.803995234898914*c_Getx-1.10660450545984*c_Gety)+cos(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+cos(2.10488685175831*c_Getx-0.683919196477949*c_Gety)+cos(1.3008916168594*c_Getx+0.42268530898189*c_Gety)+cos(1.3008916168594*c_Getx-0.42268530898189*c_Gety)+cos(1.3008916168594*c_Getx+1.79052370193779*c_Gety)+cos(${G7_x}*c_Getx-${G7_y}*c_Gety)+cos(${G8_y}*c_Gety)+cos(${G11_y}*c_Gety))
+variable pot_ext atom -0.080000000000000001665*6.728e-07*(cos(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+cos(0.803995234898914*c_Getx-1.10660450545984*c_Gety)+cos(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+cos(2.10488685175831*c_Getx-0.683919196477949*c_Gety)+cos(1.3008916168594*c_Getx+0.42268530898189*c_Gety)+cos(1.3008916168594*c_Getx-0.42268530898189*c_Gety)+cos(1.3008916168594*c_Getx+1.79052370193779*c_Gety)+cos(1.3008916168594*c_Getx-${G7_y}*c_Gety)+cos(${G8_y}*c_Gety)+cos(${G11_y}*c_Gety))
+variable pot_ext atom -0.080000000000000001665*6.728e-07*(cos(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+cos(0.803995234898914*c_Getx-1.10660450545984*c_Gety)+cos(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+cos(2.10488685175831*c_Getx-0.683919196477949*c_Gety)+cos(1.3008916168594*c_Getx+0.42268530898189*c_Gety)+cos(1.3008916168594*c_Getx-0.42268530898189*c_Gety)+cos(1.3008916168594*c_Getx+1.79052370193779*c_Gety)+cos(1.3008916168594*c_Getx-1.79052370193779*c_Gety)+cos(${G8_y}*c_Gety)+cos(${G11_y}*c_Gety))
+variable pot_ext atom -0.080000000000000001665*6.728e-07*(cos(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+cos(0.803995234898914*c_Getx-1.10660450545984*c_Gety)+cos(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+cos(2.10488685175831*c_Getx-0.683919196477949*c_Gety)+cos(1.3008916168594*c_Getx+0.42268530898189*c_Gety)+cos(1.3008916168594*c_Getx-0.42268530898189*c_Gety)+cos(1.3008916168594*c_Getx+1.79052370193779*c_Gety)+cos(1.3008916168594*c_Getx-1.79052370193779*c_Gety)+cos(2.21320901091968*c_Gety)+cos(${G11_y}*c_Gety))
+variable pot_ext atom -0.080000000000000001665*6.728e-07*(cos(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+cos(0.803995234898914*c_Getx-1.10660450545984*c_Gety)+cos(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+cos(2.10488685175831*c_Getx-0.683919196477949*c_Gety)+cos(1.3008916168594*c_Getx+0.42268530898189*c_Gety)+cos(1.3008916168594*c_Getx-0.42268530898189*c_Gety)+cos(1.3008916168594*c_Getx+1.79052370193779*c_Gety)+cos(1.3008916168594*c_Getx-1.79052370193779*c_Gety)+cos(2.21320901091968*c_Gety)+cos(1.3678383929559*c_Gety))
+variable Fx atom $(-2/25)*${V0}*(${G1_x}*(sin(${G1_x}*c_Getx+${G1_y}*c_Gety)+sin(${G1_x}*c_Getx-${G1_y}*c_Gety))+${G2_x}*(sin(${G2_x}*c_Getx+${G2_y}*c_Gety)+sin(${G2_x}*c_Getx-${G2_y}*c_Gety))+${G6_x}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)+sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_x}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fx atom -0.080000000000000001665*${V0}*(${G1_x}*(sin(${G1_x}*c_Getx+${G1_y}*c_Gety)+sin(${G1_x}*c_Getx-${G1_y}*c_Gety))+${G2_x}*(sin(${G2_x}*c_Getx+${G2_y}*c_Gety)+sin(${G2_x}*c_Getx-${G2_y}*c_Gety))+${G6_x}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)+sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_x}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fx atom -0.080000000000000001665*6.728e-07*(${G1_x}*(sin(${G1_x}*c_Getx+${G1_y}*c_Gety)+sin(${G1_x}*c_Getx-${G1_y}*c_Gety))+${G2_x}*(sin(${G2_x}*c_Getx+${G2_y}*c_Gety)+sin(${G2_x}*c_Getx-${G2_y}*c_Gety))+${G6_x}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)+sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_x}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fx atom -0.080000000000000001665*6.728e-07*(0.803995234898914*(sin(${G1_x}*c_Getx+${G1_y}*c_Gety)+sin(${G1_x}*c_Getx-${G1_y}*c_Gety))+${G2_x}*(sin(${G2_x}*c_Getx+${G2_y}*c_Gety)+sin(${G2_x}*c_Getx-${G2_y}*c_Gety))+${G6_x}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)+sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_x}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fx atom -0.080000000000000001665*6.728e-07*(0.803995234898914*(sin(0.803995234898914*c_Getx+${G1_y}*c_Gety)+sin(${G1_x}*c_Getx-${G1_y}*c_Gety))+${G2_x}*(sin(${G2_x}*c_Getx+${G2_y}*c_Gety)+sin(${G2_x}*c_Getx-${G2_y}*c_Gety))+${G6_x}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)+sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_x}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fx atom -0.080000000000000001665*6.728e-07*(0.803995234898914*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+sin(${G1_x}*c_Getx-${G1_y}*c_Gety))+${G2_x}*(sin(${G2_x}*c_Getx+${G2_y}*c_Gety)+sin(${G2_x}*c_Getx-${G2_y}*c_Gety))+${G6_x}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)+sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_x}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fx atom -0.080000000000000001665*6.728e-07*(0.803995234898914*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+sin(0.803995234898914*c_Getx-${G1_y}*c_Gety))+${G2_x}*(sin(${G2_x}*c_Getx+${G2_y}*c_Gety)+sin(${G2_x}*c_Getx-${G2_y}*c_Gety))+${G6_x}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)+sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_x}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fx atom -0.080000000000000001665*6.728e-07*(0.803995234898914*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+${G2_x}*(sin(${G2_x}*c_Getx+${G2_y}*c_Gety)+sin(${G2_x}*c_Getx-${G2_y}*c_Gety))+${G6_x}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)+sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_x}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fx atom -0.080000000000000001665*6.728e-07*(0.803995234898914*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+2.10488685175831*(sin(${G2_x}*c_Getx+${G2_y}*c_Gety)+sin(${G2_x}*c_Getx-${G2_y}*c_Gety))+${G6_x}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)+sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_x}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fx atom -0.080000000000000001665*6.728e-07*(0.803995234898914*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+2.10488685175831*(sin(2.10488685175831*c_Getx+${G2_y}*c_Gety)+sin(${G2_x}*c_Getx-${G2_y}*c_Gety))+${G6_x}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)+sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_x}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fx atom -0.080000000000000001665*6.728e-07*(0.803995234898914*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+2.10488685175831*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+sin(${G2_x}*c_Getx-${G2_y}*c_Gety))+${G6_x}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)+sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_x}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fx atom -0.080000000000000001665*6.728e-07*(0.803995234898914*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+2.10488685175831*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+sin(2.10488685175831*c_Getx-${G2_y}*c_Gety))+${G6_x}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)+sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_x}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fx atom -0.080000000000000001665*6.728e-07*(0.803995234898914*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+2.10488685175831*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+${G6_x}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)+sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_x}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fx atom -0.080000000000000001665*6.728e-07*(0.803995234898914*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+2.10488685175831*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+1.3008916168594*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)+sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_x}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fx atom -0.080000000000000001665*6.728e-07*(0.803995234898914*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+2.10488685175831*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+1.3008916168594*(sin(1.3008916168594*c_Getx+${G6_y}*c_Gety)+sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_x}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fx atom -0.080000000000000001665*6.728e-07*(0.803995234898914*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+2.10488685175831*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+1.3008916168594*(sin(1.3008916168594*c_Getx+0.42268530898189*c_Gety)+sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_x}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fx atom -0.080000000000000001665*6.728e-07*(0.803995234898914*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+2.10488685175831*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+1.3008916168594*(sin(1.3008916168594*c_Getx+0.42268530898189*c_Gety)+sin(1.3008916168594*c_Getx-${G6_y}*c_Gety))+${G7_x}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fx atom -0.080000000000000001665*6.728e-07*(0.803995234898914*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+2.10488685175831*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+1.3008916168594*(sin(1.3008916168594*c_Getx+0.42268530898189*c_Gety)+sin(1.3008916168594*c_Getx-0.42268530898189*c_Gety))+${G7_x}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fx atom -0.080000000000000001665*6.728e-07*(0.803995234898914*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+2.10488685175831*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+1.3008916168594*(sin(1.3008916168594*c_Getx+0.42268530898189*c_Gety)+sin(1.3008916168594*c_Getx-0.42268530898189*c_Gety))+1.3008916168594*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fx atom -0.080000000000000001665*6.728e-07*(0.803995234898914*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+2.10488685175831*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+1.3008916168594*(sin(1.3008916168594*c_Getx+0.42268530898189*c_Gety)+sin(1.3008916168594*c_Getx-0.42268530898189*c_Gety))+1.3008916168594*(sin(1.3008916168594*c_Getx+${G7_y}*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fx atom -0.080000000000000001665*6.728e-07*(0.803995234898914*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+2.10488685175831*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+1.3008916168594*(sin(1.3008916168594*c_Getx+0.42268530898189*c_Gety)+sin(1.3008916168594*c_Getx-0.42268530898189*c_Gety))+1.3008916168594*(sin(1.3008916168594*c_Getx+1.79052370193779*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fx atom -0.080000000000000001665*6.728e-07*(0.803995234898914*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+2.10488685175831*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+1.3008916168594*(sin(1.3008916168594*c_Getx+0.42268530898189*c_Gety)+sin(1.3008916168594*c_Getx-0.42268530898189*c_Gety))+1.3008916168594*(sin(1.3008916168594*c_Getx+1.79052370193779*c_Gety)+sin(1.3008916168594*c_Getx-${G7_y}*c_Gety)))
+variable Fx atom -0.080000000000000001665*6.728e-07*(0.803995234898914*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)+sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+2.10488685175831*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)+sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+1.3008916168594*(sin(1.3008916168594*c_Getx+0.42268530898189*c_Gety)+sin(1.3008916168594*c_Getx-0.42268530898189*c_Gety))+1.3008916168594*(sin(1.3008916168594*c_Getx+1.79052370193779*c_Gety)+sin(1.3008916168594*c_Getx-1.79052370193779*c_Gety)))
+variable Fy atom $(-2/25)*${V0}*(${G1_y}*(sin(${G1_x}*c_Getx+${G1_y}*c_Gety)-sin(${G1_x}*c_Getx-${G1_y}*c_Gety))+${G2_y}*(sin(${G2_x}*c_Getx+${G2_y}*c_Gety)-sin(${G2_x}*c_Getx-${G2_y}*c_Gety))+${G6_y}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)-sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_y}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*${V0}*(${G1_y}*(sin(${G1_x}*c_Getx+${G1_y}*c_Gety)-sin(${G1_x}*c_Getx-${G1_y}*c_Gety))+${G2_y}*(sin(${G2_x}*c_Getx+${G2_y}*c_Gety)-sin(${G2_x}*c_Getx-${G2_y}*c_Gety))+${G6_y}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)-sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_y}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(${G1_y}*(sin(${G1_x}*c_Getx+${G1_y}*c_Gety)-sin(${G1_x}*c_Getx-${G1_y}*c_Gety))+${G2_y}*(sin(${G2_x}*c_Getx+${G2_y}*c_Gety)-sin(${G2_x}*c_Getx-${G2_y}*c_Gety))+${G6_y}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)-sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_y}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(${G1_x}*c_Getx+${G1_y}*c_Gety)-sin(${G1_x}*c_Getx-${G1_y}*c_Gety))+${G2_y}*(sin(${G2_x}*c_Getx+${G2_y}*c_Gety)-sin(${G2_x}*c_Getx-${G2_y}*c_Gety))+${G6_y}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)-sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_y}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+${G1_y}*c_Gety)-sin(${G1_x}*c_Getx-${G1_y}*c_Gety))+${G2_y}*(sin(${G2_x}*c_Getx+${G2_y}*c_Gety)-sin(${G2_x}*c_Getx-${G2_y}*c_Gety))+${G6_y}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)-sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_y}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)-sin(${G1_x}*c_Getx-${G1_y}*c_Gety))+${G2_y}*(sin(${G2_x}*c_Getx+${G2_y}*c_Gety)-sin(${G2_x}*c_Getx-${G2_y}*c_Gety))+${G6_y}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)-sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_y}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)-sin(0.803995234898914*c_Getx-${G1_y}*c_Gety))+${G2_y}*(sin(${G2_x}*c_Getx+${G2_y}*c_Gety)-sin(${G2_x}*c_Getx-${G2_y}*c_Gety))+${G6_y}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)-sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_y}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)-sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+${G2_y}*(sin(${G2_x}*c_Getx+${G2_y}*c_Gety)-sin(${G2_x}*c_Getx-${G2_y}*c_Gety))+${G6_y}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)-sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_y}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)-sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+0.683919196477949*(sin(${G2_x}*c_Getx+${G2_y}*c_Gety)-sin(${G2_x}*c_Getx-${G2_y}*c_Gety))+${G6_y}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)-sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_y}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)-sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+0.683919196477949*(sin(2.10488685175831*c_Getx+${G2_y}*c_Gety)-sin(${G2_x}*c_Getx-${G2_y}*c_Gety))+${G6_y}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)-sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_y}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)-sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+0.683919196477949*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)-sin(${G2_x}*c_Getx-${G2_y}*c_Gety))+${G6_y}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)-sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_y}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)-sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+0.683919196477949*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)-sin(2.10488685175831*c_Getx-${G2_y}*c_Gety))+${G6_y}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)-sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_y}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)-sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+0.683919196477949*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)-sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+${G6_y}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)-sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_y}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)-sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+0.683919196477949*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)-sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+0.42268530898189*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)-sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_y}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)-sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+0.683919196477949*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)-sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+0.42268530898189*(sin(1.3008916168594*c_Getx+${G6_y}*c_Gety)-sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_y}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)-sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+0.683919196477949*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)-sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+0.42268530898189*(sin(1.3008916168594*c_Getx+0.42268530898189*c_Gety)-sin(${G6_x}*c_Getx-${G6_y}*c_Gety))+${G7_y}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)-sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+0.683919196477949*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)-sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+0.42268530898189*(sin(1.3008916168594*c_Getx+0.42268530898189*c_Gety)-sin(1.3008916168594*c_Getx-${G6_y}*c_Gety))+${G7_y}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)-sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+0.683919196477949*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)-sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+0.42268530898189*(sin(1.3008916168594*c_Getx+0.42268530898189*c_Gety)-sin(1.3008916168594*c_Getx-0.42268530898189*c_Gety))+${G7_y}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)-sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+0.683919196477949*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)-sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+0.42268530898189*(sin(1.3008916168594*c_Getx+0.42268530898189*c_Gety)-sin(1.3008916168594*c_Getx-0.42268530898189*c_Gety))+1.79052370193779*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)-sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+0.683919196477949*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)-sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+0.42268530898189*(sin(1.3008916168594*c_Getx+0.42268530898189*c_Gety)-sin(1.3008916168594*c_Getx-0.42268530898189*c_Gety))+1.79052370193779*(sin(1.3008916168594*c_Getx+${G7_y}*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)-sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+0.683919196477949*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)-sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+0.42268530898189*(sin(1.3008916168594*c_Getx+0.42268530898189*c_Gety)-sin(1.3008916168594*c_Getx-0.42268530898189*c_Gety))+1.79052370193779*(sin(1.3008916168594*c_Getx+1.79052370193779*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)-sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+0.683919196477949*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)-sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+0.42268530898189*(sin(1.3008916168594*c_Getx+0.42268530898189*c_Gety)-sin(1.3008916168594*c_Getx-0.42268530898189*c_Gety))+1.79052370193779*(sin(1.3008916168594*c_Getx+1.79052370193779*c_Gety)-sin(1.3008916168594*c_Getx-${G7_y}*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)-sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+0.683919196477949*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)-sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+0.42268530898189*(sin(1.3008916168594*c_Getx+0.42268530898189*c_Gety)-sin(1.3008916168594*c_Getx-0.42268530898189*c_Gety))+1.79052370193779*(sin(1.3008916168594*c_Getx+1.79052370193779*c_Gety)-sin(1.3008916168594*c_Getx-1.79052370193779*c_Gety))+${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)-sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+0.683919196477949*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)-sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+0.42268530898189*(sin(1.3008916168594*c_Getx+0.42268530898189*c_Gety)-sin(1.3008916168594*c_Getx-0.42268530898189*c_Gety))+1.79052370193779*(sin(1.3008916168594*c_Getx+1.79052370193779*c_Gety)-sin(1.3008916168594*c_Getx-1.79052370193779*c_Gety))+2.21320901091968*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)-sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+0.683919196477949*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)-sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+0.42268530898189*(sin(1.3008916168594*c_Getx+0.42268530898189*c_Gety)-sin(1.3008916168594*c_Getx-0.42268530898189*c_Gety))+1.79052370193779*(sin(1.3008916168594*c_Getx+1.79052370193779*c_Gety)-sin(1.3008916168594*c_Getx-1.79052370193779*c_Gety))+2.21320901091968*sin(2.21320901091968*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)-sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+0.683919196477949*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)-sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+0.42268530898189*(sin(1.3008916168594*c_Getx+0.42268530898189*c_Gety)-sin(1.3008916168594*c_Getx-0.42268530898189*c_Gety))+1.79052370193779*(sin(1.3008916168594*c_Getx+1.79052370193779*c_Gety)-sin(1.3008916168594*c_Getx-1.79052370193779*c_Gety))+2.21320901091968*sin(2.21320901091968*c_Gety)+1.3678383929559*sin(${G11_y}*c_Gety))
+variable Fy atom -0.080000000000000001665*6.728e-07*(1.10660450545984*(sin(0.803995234898914*c_Getx+1.10660450545984*c_Gety)-sin(0.803995234898914*c_Getx-1.10660450545984*c_Gety))+0.683919196477949*(sin(2.10488685175831*c_Getx+0.683919196477949*c_Gety)-sin(2.10488685175831*c_Getx-0.683919196477949*c_Gety))+0.42268530898189*(sin(1.3008916168594*c_Getx+0.42268530898189*c_Gety)-sin(1.3008916168594*c_Getx-0.42268530898189*c_Gety))+1.79052370193779*(sin(1.3008916168594*c_Getx+1.79052370193779*c_Gety)-sin(1.3008916168594*c_Getx-1.79052370193779*c_Gety))+2.21320901091968*sin(2.21320901091968*c_Gety)+1.3678383929559*sin(1.3678383929559*c_Gety))
+#---------- Forces --------------------------------------------------------------------------------#
+variable timest equal 50
+timestep	${timest}  # microseconds
+timestep	50  
+# displace_atoms all rotate 0.0 0.0 0.0 0.0 0.0 1.0 5.30542   # x y z (origin point) vx vy vz (rotation axis vector) angle
+fix subForce all addforce v_Fx v_Fy 0.0 energy v_pot_ext   # force field due to substrate potential
+fix_modify subForce energy yes
+variable F1s equal v_V0*4.279396/5.4
+variable Forcefrac equal 0.3*v_F1s
+fix pullForce all addforce v_Forcefrac 0.0 0.0   # pulling force: fx fy fz
+#---------- Compute variables ---------------------------------------------------------------------#
+compute pot_e all pe
+compute kin_e all ke
+# compute bond_e all pe bond   # pot_e already includes bond energy
+variable etot equal c_pot_e+c_kin_e
+variable velox equal vcm(internal,x)
+variable veloy equal vcm(internal,y)
+variable positx equal xcm(internal,x)
+variable posity equal xcm(internal,y)
+variable tstep equal step
+variable real_time equal v_tstep*v_timest
+#---------- thermo outputs ------------------------------------------------------------------------#
+thermo_style custom step v_positx v_velox v_posity v_veloy   # step*${timestep}
+thermo_modify format 2 %15.10g
+thermo_modify format 3 %15.10g
+thermo_modify format 4 %15.10g
+thermo_modify format 5 %15.10g
+thermo 1000
+#---------- Dump compatible with ovito animations -------------------------------------------------#
+# dump 10000 all custom 100 dump_test_* id type xs ys zs vx vy vz
+#---------- Run -----------------------------------------------------------------------------------#
+fix 3 all langevin 0.0 0.0 5000 1    # fix ID group_ID langevin Tstart Tstop damp seed
+fix 4 internal nve
+fix frame external rigid single   # rigid performs nve sim; if used, only apply fix nve to internal
+  1 rigid bodies with 346 atoms
+fix posit_out all print 1000 "${tstep} ${real_time} ${positx} ${velox} ${posity} ${veloy}" file pos_vel.dat screen no
+# fix screenout all print 1000 "${tstep} ${real_time} ${positx} ${velox} ${posity} ${veloy}"
+run 200000
+
+CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE
+
+Your simulation uses code contributions which should be cited:
+
+- Type Label Framework: https://doi.org/10.1021/acs.jpcb.3c08419
+
+@Article{Gissinger24,
+ author = {Jacob R. Gissinger, Ilia Nikiforov, Yaser Afshar, Brendon Waters, Moon-ki Choi, Daniel S. Karls, Alexander Stukowski, Wonpil Im, Hendrik Heinz, Axel Kohlmeyer, and Ellad B. Tadmor},
+ title = {Type Label Framework for Bonded Force Fields in LAMMPS},
+ journal = {J. Phys. Chem. B},
+ year =    2024,
+ volume =  128,
+ number =  13,
+ pages =   {3282–-3297}
+}
+
+CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE
+
+WARNING: No pairwise cutoff or binsize set. Atom sorting therefore disabled. (src/atom.cpp:2442)
+Per MPI rank memory allocation (min/avg/max) = 8.165 | 8.165 | 8.165 Mbytes
+   Step        v_positx       v_velox        v_posity       v_veloy    
+         0   -0.03205891207 -3.495529896e-12  -0.04465949836 -5.614553936e-12
+      1000     0.5524331844 7.612287716e-06  0.001784039851 1.622903922e-06
+      2000     0.9396149028  8.51137831e-06    0.1033883057 2.130141436e-06
+      3000      1.437957415 1.086207827e-05    0.1803945496 1.088876963e-06
+      4000      1.904318241  8.32228351e-06    0.2554460056 1.757001437e-06
+      5000      2.367361855 1.035487112e-05    0.3317586369 1.350636081e-06
+      6000      2.883897248 9.928054287e-06    0.4095630491 1.898745596e-06
+      7000      3.389624018  1.07230477e-05    0.5063150844 1.833523554e-06
+      8000      3.911273548  1.02523847e-05     0.607329988 2.162795614e-06
+      9000      4.432170726  1.03158204e-05    0.7123364838 2.080022667e-06
+     10000      4.929428923 9.799753394e-06    0.8125301929 2.027728804e-06
+     11000      5.417833768 9.798180624e-06    0.9143656693 1.982705363e-06
+     12000      5.900761885 9.649455149e-06     1.013833989 2.077616808e-06
+     13000      6.395466474 1.003562262e-05     1.112482704 1.937921145e-06
+     14000      6.886952053   9.7599661e-06      1.21114736 1.938442034e-06
+     15000      7.384684383 1.029691462e-05     1.301845493 1.645608476e-06
+     16000       7.88759641 9.882859202e-06     1.391381013  1.96438487e-06
+     17000      8.379408338 1.010809607e-05     1.489149668 1.803225139e-06
+     18000      8.889022283 1.000485524e-05     1.579088193 1.859094908e-06
+     19000       9.38341004 1.010888362e-05     1.670853599 1.766369611e-06
+     20000      9.896103155 1.019659451e-05     1.757682818 1.816078366e-06
+     21000      10.38951916 9.847371962e-06     1.850219081  1.82201845e-06
+     22000      10.89261126  1.01235547e-05     1.941246638 1.898691959e-06
+     23000      11.39068334 9.891306102e-06     2.040364214 1.976608012e-06
+     24000      11.88429019 9.994212046e-06     2.138522818 1.891559911e-06
+     25000       12.3808882 1.011053621e-05     2.235808749 1.859483115e-06
+     26000      12.89865417 1.009935385e-05      2.32210048  1.82738909e-06
+     27000      13.38855096 1.000964077e-05     2.419082835 1.844202882e-06
+     28000      13.90972955 1.065181729e-05     2.503582202  1.63139626e-06
+     29000      14.41655602 9.858368667e-06     2.595964857 1.857085578e-06
+     30000      14.92421637 1.038666274e-05     2.685326638 1.779887415e-06
+     31000       15.4333928 9.928692748e-06     2.774009552 1.846551311e-06
+     32000      15.94054521 1.030248399e-05     2.865576681 1.749727852e-06
+     33000      16.44113687  9.90135415e-06     2.957061971 1.967532459e-06
+     34000      16.94052318  1.01056976e-05     3.058070242 1.862876724e-06
+     35000      17.44040675 9.849427388e-06     3.151331064 1.793030747e-06
+     36000      17.95063943 1.041250952e-05       3.2384461 1.656778113e-06
+     37000      18.46418696  1.01513207e-05     3.328231908 1.894684155e-06
+     38000      18.98014399 1.064007182e-05     3.416828373 1.600775346e-06
+     39000      19.49110932 9.850648768e-06     3.503392426 1.804501387e-06
+     40000      19.99513592 1.046775699e-05       3.5888388 1.539358158e-06
+     41000      20.51324559 9.949706101e-06     3.672735056 1.849595516e-06
+     42000      21.01379873 1.014911391e-05      3.76793665 1.916991866e-06
+     43000      21.51757789 1.002428462e-05     3.858245587 1.782327562e-06
+     44000      22.02560404 1.046142407e-05     3.948638674 1.841021221e-06
+     45000      22.53894893 1.027696547e-05     4.042258177 1.963355528e-06
+     46000       23.0564558 1.027870345e-05      4.13719554 1.836853936e-06
+     47000       23.5768408 1.058581737e-05     4.222667172 1.691767857e-06
+     48000      24.09734604 1.028948576e-05     4.313609501 1.823667984e-06
+     49000       24.6188633 1.055526457e-05     4.398495405 1.635551141e-06
+     50000      25.13794675 1.009076457e-05     4.479864577 1.717057762e-06
+     51000      25.64629176 1.027618322e-05     4.569202373 1.824658919e-06
+     52000      26.16568479 1.028223568e-05     4.659331671 1.836392552e-06
+     53000      26.68162028  1.03187468e-05     4.752330877  1.83528052e-06
+     54000       27.1960806 1.020600176e-05     4.843252033 1.945719582e-06
+     55000      27.70676938 1.031305271e-05     4.937919772  1.81884701e-06
+     56000      28.22727454 1.029777636e-05     5.029907684  1.91215802e-06
+     57000      28.73918112 1.035944175e-05     5.120653456 1.736369366e-06
+     58000      29.26098457 1.027362514e-05     5.205792277 1.764142451e-06
+     59000      29.77594915  1.04971626e-05     5.292610374 1.651060697e-06
+     60000      30.30800318 1.035009144e-05     5.375178537 1.696079052e-06
+     61000       30.8177203 1.031058166e-05     5.465110557 1.867581399e-06
+     62000      31.34940317 1.073989989e-05     5.554102195 1.741234488e-06
+     63000      31.87131742 1.041004653e-05     5.643333231 1.775851211e-06
+     64000      32.39111382 1.043775082e-05     5.731580629 1.657380313e-06
+     65000      32.91198378 1.048499531e-05      5.81539566 1.728754571e-06
+     66000      33.44224593 1.045868408e-05     5.903513105 1.809978175e-06
+     67000      33.96112599 1.034890686e-05     5.995429299 1.790587797e-06
+     68000      34.48598194 1.066215238e-05     6.079237732 1.728822969e-06
+     69000      35.01398687 1.028444766e-05     6.168156265 1.671946737e-06
+     70000      35.54228645 1.075687941e-05     6.248132108 1.531968557e-06
+     71000      36.07301305 1.048244607e-05     6.321809017 1.496080877e-06
+     72000      36.59556144 1.051943718e-05     6.399856825 1.625040194e-06
+     73000      37.11671827 1.036258571e-05     6.482825936    1.643288e-06
+     74000      37.64034558  1.03968432e-05     6.568845584 1.783877033e-06
+     75000      38.16693487 1.058091077e-05     6.650978102 1.650879151e-06
+     76000      38.69828922 1.070986055e-05     6.733259938 1.628262597e-06
+     77000      39.22938524 1.051729516e-05     6.815851053 1.686650194e-06
+     78000      39.75047785 1.041142405e-05     6.902800669 1.776037699e-06
+     79000        40.285549 1.079065831e-05     6.985853847 1.593083942e-06
+     80000      40.81670667 1.047932894e-05     7.068379785 1.627960211e-06
+     81000      41.34346211 1.077326721e-05     7.149631148 1.504767167e-06
+     82000      41.87750307 1.050889517e-05     7.226048313 1.617094996e-06
+     83000      42.40779953 1.067899911e-05     7.307873166 1.574570175e-06
+     84000      42.94569511 1.083367368e-05     7.385620276 1.675329582e-06
+     85000      43.47268224  1.03666334e-05      7.46976472  1.59623775e-06
+     86000      44.00470411 1.090951319e-05     7.548718724 1.584789245e-06
+     87000      44.54686031 1.073046478e-05     7.630366753 1.561784418e-06
+     88000      45.07480235 1.049849824e-05     7.710536341 1.674183268e-06
+     89000      45.61392189 1.098088033e-05     7.794477464 1.696767679e-06
+     90000      46.15247183 1.066479577e-05     7.882293349 1.752816878e-06
+     91000      46.69042137 1.095388411e-05      7.96843866  1.64750971e-06
+     92000      47.24372361 1.093109774e-05     8.048745863 1.554572175e-06
+     93000      47.78449981 1.097538133e-05     8.127518881 1.663715002e-06
+     94000       48.3352527 1.097670756e-05     8.202096062 1.244946491e-06
+     95000      48.87401164   1.0718279e-05     8.273258092 1.521389755e-06
+     96000      49.41945302 1.107827606e-05     8.349726061 1.473311855e-06
+     97000      49.97343625 1.103894478e-05     8.422295429 1.525929903e-06
+     98000      50.51152998 1.062395788e-05     8.503775661 1.739516449e-06
+     99000       51.0563719 1.107259412e-05     8.584441804 1.477778609e-06
+    100000      51.60016295 1.067217072e-05      8.66520552  1.71268631e-06
+    101000       52.1315571 1.077754862e-05     8.749132831 1.601525292e-06
+    102000      52.68668001 1.112128266e-05     8.827868809 1.562995513e-06
+    103000       53.2319929 1.083937862e-05     8.909278715 1.702579303e-06
+    104000       53.7698747  1.08660357e-05     8.985057724 1.278293409e-06
+    105000      54.31849867  1.11543359e-05     9.051977172 1.381084226e-06
+    106000      54.87399445 1.107457709e-05      9.12535996  1.55426844e-06
+    107000      55.42852916 1.081582899e-05     9.198805466 1.556432374e-06
+    108000      55.98076001 1.131096494e-05     9.275563226 1.580854007e-06
+    109000      56.53321761 1.089020443e-05     9.356062028 1.475974479e-06
+    110000      57.06669527 1.065556217e-05     9.430795094 1.615630603e-06
+    111000      57.61221624 1.103464946e-05     9.511449435 1.584802586e-06
+    112000      58.17129963  1.10535231e-05     9.586245017 1.477216503e-06
+    113000      58.71991149 1.111630619e-05     9.667286564 1.592765118e-06
+    114000       59.2730823 1.107868851e-05     9.743669601 1.528230729e-06
+    115000      59.82788126 1.104683754e-05     9.813291484 1.342599042e-06
+    116000      60.38299927 1.104783817e-05     9.884887382 1.490392314e-06
+    117000      60.94570197 1.126365164e-05     9.955888438 1.395457359e-06
+    118000       61.5086332 1.108919464e-05     10.02127397 1.355682849e-06
+    119000      62.05386058 1.080550205e-05     10.09517671 1.592292054e-06
+    120000      62.60144415  1.10657157e-05     10.17537781 1.522156333e-06
+    121000      63.15705538 1.119987462e-05     10.25054499 1.453299394e-06
+    122000       63.7171505 1.118162969e-05     10.32156013 1.423738178e-06
+    123000      64.27316895  1.11047478e-05     10.39389617 1.412431948e-06
+    124000      64.83234636 1.132636562e-05     10.46265679 1.380435613e-06
+    125000      65.39893652 1.123213268e-05     10.53486617 1.477650689e-06
+    126000      65.95753044 1.131166566e-05     10.60410849 1.298587935e-06
+    127000      66.52527087 1.123572612e-05      10.6708681 1.358300487e-06
+    128000      67.08523872 1.124675136e-05     10.73873568 1.325924504e-06
+    129000      67.64426427 1.116222998e-05     10.80729495 1.477814335e-06
+    130000      68.20239045  1.12144929e-05     10.88425385 1.535430196e-06
+    131000      68.77239569 1.156168977e-05     10.95896987 1.424736703e-06
+    132000      69.34179922 1.132228116e-05     11.02933276 1.464746479e-06
+    133000      69.90921074 1.122225322e-05     11.10298674 1.407426975e-06
+    134000      70.47442833 1.141207692e-05     11.16743244 1.178798298e-06
+    135000      71.04879072 1.145205747e-05      11.2304604 1.295947446e-06
+    136000      71.61786932 1.127307644e-05     11.29733243 1.283212219e-06
+    137000      72.18911443 1.167708359e-05     11.35333638 1.132853573e-06
+    138000      72.76823632 1.133189173e-05     11.41544412 1.339897506e-06
+    139000      73.32599976 1.121375152e-05     11.48245166 1.389338347e-06
+    140000      73.88779519 1.135063771e-05     11.55210745 1.346755628e-06
+    141000      74.46421439   1.1594605e-05     11.61944628 1.296348559e-06
+    142000      75.03379776 1.133540101e-05     11.68425191 1.265633652e-06
+    143000      75.60964153 1.151426126e-05     11.75136013  1.28609584e-06
+    144000      76.18797812 1.141836308e-05     11.81018099 1.156899926e-06
+    145000      76.75479227 1.125932747e-05     11.87432849 1.365045985e-06
+    146000      77.32371739 1.149816981e-05     11.94479428 1.357572175e-06
+    147000      77.90192189 1.149791089e-05     12.01028165 1.071589075e-06
+    148000      78.46448971 1.116251147e-05     12.06531227 1.226011018e-06
+    149000      79.02951726 1.148204749e-05     12.12847672 1.284730933e-06
+    150000      79.61685347 1.175695395e-05     12.19686545 1.353680289e-06
+    151000      80.19366968 1.128006181e-05     12.26404822 1.424449842e-06
+    152000      80.75550801 1.145707448e-05     12.33132376 1.239400522e-06
+    153000      81.33663939 1.173145701e-05     12.39157861 1.134908824e-06
+    154000      81.91542108 1.122057155e-05     12.45055429 1.237508851e-06
+    155000      82.48299063 1.164308809e-05     12.51445716 1.288813232e-06
+    156000      83.06932822 1.169531008e-05     12.56970971 1.034297072e-06
+    157000      83.64141723 1.130952055e-05      12.6290284 1.277211332e-06
+    158000      84.21850714 1.168175745e-05     12.69177487 1.159766683e-06
+    159000      84.80579641 1.163450912e-05     12.75221352 1.201890904e-06
+    160000      85.37925395 1.139926926e-05     12.80861965 1.096571605e-06
+    161000      85.95464092 1.160496035e-05     12.86477706 1.254999036e-06
+    162000      86.53809121  1.18860815e-05     12.93077926 1.295507149e-06
+    163000      87.13463207 1.173777548e-05     12.99654061 1.361235823e-06
+    164000      87.71132964 1.139794038e-05      13.0628047 1.310398227e-06
+    165000      88.29341923 1.167489063e-05     13.12473206 1.182333736e-06
+    166000      88.87880365 1.160492863e-05     13.18215498 1.205333657e-06
+    167000      89.44773531 1.155742093e-05     13.24222669 1.151613638e-06
+    168000      90.04283412 1.204110032e-05     13.29956864 1.102911471e-06
+    169000      90.63799688 1.155790414e-05     13.35509627 1.078553685e-06
+    170000      91.21256595 1.158739616e-05     13.40803695  1.02683766e-06
+    171000      91.80111438 1.198115358e-05     13.46152667 1.058012059e-06
+    172000      92.39830485 1.170366282e-05     13.51578633 1.127918303e-06
+    173000      92.98476107 1.172585564e-05     13.57241207 1.134250975e-06
+    174000      93.57809624 1.191819082e-05     13.62956502 1.131726893e-06
+    175000      94.16272743 1.143977259e-05     13.69059785 1.284821879e-06
+    176000      94.73426814 1.151054308e-05     13.75654836 1.307473391e-06
+    177000      95.32315334 1.210011708e-05     13.81756862 1.204508022e-06
+    178000      95.92815189 1.204501548e-05     13.87694062 1.206124822e-06
+    179000      96.50660512 1.141500632e-05     13.93520042 1.083368607e-06
+    180000      97.09320846 1.183809697e-05     13.98413976 9.067116743e-07
+    181000      97.69537471 1.199732837e-05     14.03298875 1.037901431e-06
+    182000      98.28029412  1.15625254e-05     14.09034977 1.255018567e-06
+    183000      98.86695099 1.206081483e-05     14.14433847 1.045957506e-06
+    184000      99.47367101 1.202568092e-05     14.20010533 1.180812775e-06
+    185000      100.0612119  1.15190371e-05     14.25744272 1.097894531e-06
+    186000      100.6414747 1.186078273e-05     14.31132906 1.076667586e-06
+    187000      101.2402921 1.211816299e-05     14.36464497 1.083306532e-06
+    188000      101.8324914  1.15045863e-05     14.42370149 1.254308275e-06
+    189000      102.4138294 1.169795362e-05     14.48371308 1.125086165e-06
+    190000      103.0124017 1.204245573e-05     14.53421916 9.092293868e-07
+    191000      103.6066562 1.184997392e-05      14.5793778 9.945887639e-07
+    192000      104.1967167 1.163079781e-05     14.62679319  9.98786146e-07
+    193000      104.7859998 1.183116777e-05     14.68106064  1.17471054e-06
+    194000      105.3782987 1.175811182e-05     14.74038265 1.253560043e-06
+    195000      105.9663739 1.187580376e-05     14.80332052 1.124786682e-06
+    196000      106.5714159 1.202430119e-05     14.84993477 8.565913437e-07
+    197000      107.1572934 1.151427564e-05     14.89933349 1.025659279e-06
+    198000      107.7399758 1.202205261e-05     14.94796408 9.706662255e-07
+    199000      108.3494367  1.20946699e-05     14.99600533 9.528091836e-07
+    200000      108.9447592 1.154339572e-05     15.04893865 1.234948201e-06
+Loop time of 1533.65 on 1 procs for 200000 steps with 9407 atoms
+
+Performance: 563361473785.788 ns/day, 0.000 hours/ns, 130.408 timesteps/s, 1.227 Matom-step/s
+99.8% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0          | 0          | 0          |   0.0 |  0.00
+Bond    | 18.597     | 18.597     | 18.597     |   0.0 |  1.21
+Neigh   | 1.7206     | 1.7206     | 1.7206     |   0.0 |  0.11
+Comm    | 0.70986    | 0.70986    | 0.70986    |   0.0 |  0.05
+Output  | 0.018994   | 0.018994   | 0.018994   |   0.0 |  0.00
+Modify  | 1510.5     | 1510.5     | 1510.5     |   0.0 | 98.49
+Other   |            | 2.074      |            |       |  0.14
+
+Nlocal:           9407 ave        9407 max        9407 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:              0 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:              0 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Ave special neighs/atom = 35.025194
+Neighbor list builds = 18730
+Dangerous builds = 0
+write_data final_config.lmpdat
+System init for write_data ...
+write_restart friction.restart
+System init for write_restart ...
+Total wall time: 0:25:33

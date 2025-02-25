@@ -1,0 +1,73 @@
+log sim_log.lammps append
+read_restart friction.restart
+compute Getx all property/atom x
+compute Gety all property/atom y
+variable c equal 2*PI/5.40       # <---- a_pot
+#---------- Define G, V0, F -----------------------------------------------------------------------#
+variable G1_x equal ${c}*(cos(0)-cos(2*PI/5))   # i valori sono gli stessi per G1, G4, G5, G17
+variable G1_y equal ${c}*(sin(2*PI/5)-sin(0))
+variable G2_x equal ${c}*(cos(0)-cos(4*PI/5))   # idem per G2, +G3, G9, G13
+variable G2_y equal ${c}*(sin(4*PI/5)-sin(0))
+variable G6_x equal ${c}*(cos(2*PI/5)-cos(4*PI/5))
+variable G6_y equal ${c}*(sin(2*PI/5)-sin(4*PI/5))    # hanno anche Gy uguale G10,G16,G20
+variable G7_x equal ${G6_x}
+variable G7_y equal ${c}*(sin(2*PI/5)-sin(6*PI/5))    # Gx uguale al gruppo di G6, mentre
+variable G8_x equal 0.0 # Gx uguale G8 G18 G11 G15 #sarebbe 0
+variable G8_y equal ${c}*(sin(2*PI/5)-sin(8*PI/5))   # G8 e G18 sulle y
+variable G11_y equal ${c}*(sin(4*PI/5)-sin(6*PI/5))  # G11 e G15 sulle y
+# POTENTIAL AMP: 1e-07 is 0.1zJ
+variable g equal 0.1
+variable V0 equal v_g*2.0e-07*(5.80^2)
+# variable V0 equal 1.0e-7
+variable pot_ext atom $(-2/25)*${V0}*(cos(${G1_x}*c_Getx+${G1_y}*c_Gety)+cos(${G1_x}*c_Getx-${G1_y}*c_Gety)&
++cos(${G2_x}*c_Getx+${G2_y}*c_Gety)+cos(${G2_x}*c_Getx-${G2_y}*c_Gety)&
++cos(${G6_x}*c_Getx+${G6_y}*c_Gety)+cos(${G6_x}*c_Getx-${G6_y}*c_Gety)&
++cos(${G7_x}*c_Getx+${G7_y}*c_Gety)+cos(${G7_x}*c_Getx-${G7_y}*c_Gety)&
++cos(${G8_y}*c_Gety)+cos(${G11_y}*c_Gety))
+variable Fx atom $(-2/25)*${V0}*(${G1_x}*(sin(${G1_x}*c_Getx+${G1_y}*c_Gety)+sin(${G1_x}*c_Getx-${G1_y}*c_Gety))&
++${G2_x}*(sin(${G2_x}*c_Getx+${G2_y}*c_Gety)+sin(${G2_x}*c_Getx-${G2_y}*c_Gety))&
++${G6_x}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)+sin(${G6_x}*c_Getx-${G6_y}*c_Gety))&
++${G7_x}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)+sin(${G7_x}*c_Getx-${G7_y}*c_Gety)))
+variable Fy atom $(-2/25)*${V0}*(${G1_y}*(sin(${G1_x}*c_Getx+${G1_y}*c_Gety)-sin(${G1_x}*c_Getx-${G1_y}*c_Gety))&
++${G2_y}*(sin(${G2_x}*c_Getx+${G2_y}*c_Gety)-sin(${G2_x}*c_Getx-${G2_y}*c_Gety))&
++${G6_y}*(sin(${G6_x}*c_Getx+${G6_y}*c_Gety)-sin(${G6_x}*c_Getx-${G6_y}*c_Gety))&
++${G7_y}*(sin(${G7_x}*c_Getx+${G7_y}*c_Gety)-sin(${G7_x}*c_Getx-${G7_y}*c_Gety))&
++${G8_y}*sin(${G8_y}*c_Gety)+${G11_y}*sin(${G11_y}*c_Gety))
+#---------- Forces --------------------------------------------------------------------------------#
+variable timest equal 50
+timestep	${timest}  # microseconds
+# displace_atoms all rotate 0.0 0.0 0.0 0.0 0.0 1.0 5.30542   # x y z (origin point) vx vy vz (rotation axis vector) angle
+fix subForce all addforce v_Fx v_Fy 0.0 energy v_pot_ext   # force field due to substrate potential
+fix_modify subForce energy yes
+variable F1s equal v_V0*4.279396/5.4
+variable Forcefrac equal 0.3*v_F1s
+fix pullForce all addforce v_Forcefrac 0.0 0.0   # pulling force: fx fy fz
+#---------- Compute variables ---------------------------------------------------------------------#
+compute pot_e all pe
+compute kin_e all ke
+# compute bond_e all pe bond   # pot_e already includes bond energy
+variable etot equal c_pot_e+c_kin_e
+variable velox equal vcm(internal,x)
+variable veloy equal vcm(internal,y)
+variable positx equal xcm(internal,x)
+variable posity equal xcm(internal,y)
+variable tstep equal step
+variable real_time equal v_tstep*v_timest
+#---------- thermo outputs ------------------------------------------------------------------------#
+thermo_style custom step v_positx v_velox v_posity v_veloy   # step*${timestep}
+thermo_modify format 2 %15.10g
+thermo_modify format 3 %15.10g
+thermo_modify format 4 %15.10g
+thermo_modify format 5 %15.10g
+thermo 1000
+#---------- Dump compatible with ovito animations -------------------------------------------------#
+# dump 10000 all custom 100 dump_test_* id type xs ys zs vx vy vz
+#---------- Run -----------------------------------------------------------------------------------#
+fix 3 all langevin 0.0 0.0 5000 1    # fix ID group_ID langevin Tstart Tstop damp seed
+fix 4 internal nve
+fix frame external rigid single   # rigid performs nve sim; if used, only apply fix nve to internal
+fix posit_out all print 1000 "${tstep} ${real_time} ${positx} ${velox} ${posity} ${veloy}" append pos_vel.dat screen no
+# fix screenout all print 1000 "${tstep} ${real_time} ${positx} ${velox} ${posity} ${veloy}"
+run 8000
+write_data final_config.lmpdat
+write_restart friction.restart
