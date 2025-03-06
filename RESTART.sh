@@ -44,11 +44,11 @@ mv sim_log_$2.lammps sim_log.lammps
 
 cp INPUT/apply_force_restart.in apply_force_restart.in
 
-sed -i '' "19s/.*/variable g equal $1/" apply_force_restart.in
+sed -i '' "22s/.*/variable g equal $1/" apply_force_restart.in
 
-sed -i '' "43s/.*/variable Forcefrac equal $2*v_F1s/" apply_force_restart.in
+sed -i '' "44s/.*/variable Forcefrac equal $2*v_F1s/" apply_force_restart.in
 
-sed -i '' "71s/.*/run $3/" apply_force_restart.in
+sed -i '' "70s/.*/run $3/" apply_force_restart.in
 
 echo "------------------------------------------------------------------------"
 echo " "
@@ -73,4 +73,4 @@ mv CONFIG/FRICTION/friction_$1/final_config.lmpdat CONFIG/FRICTION/friction_$1/f
 mv friction.restart friction_$2.restart
 mv friction_$2.restart CONFIG/FRICTION/friction_$1/restart/friction_$2.restart
 
-rm -f apply_force_restart.in
+rm -f apply_force_restart.in log.lammps

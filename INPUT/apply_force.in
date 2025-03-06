@@ -5,12 +5,16 @@ atom_style bond
 bond_style harmonic
 boundary p p p
 read_data start_config.lmpdat
-bond_coeff 1 1.000000e-07 5.80    # <---- a_coll
+variable a_coll equal 5.80
+variable k_coll equal 2.0e-7
+variable k_lammps equal v_k_coll/2
+bond_coeff 1 ${k_lammps} ${a_coll}
 group internal type 1
 group external type 2
 compute Getx all property/atom x
 compute Gety all property/atom y
-variable c equal 2*PI/5.40       # <---- a_pot
+variable a_pot equal 5.40
+variable c equal 2*PI/v_a_pot
 #---------- Define G, V0, F -----------------------------------------------------------------------#
 variable G1_x equal ${c}*(cos(0)-cos(2*PI/5))   # i valori sono gli stessi per G1, G4, G5, G17
 variable G1_y equal ${c}*(sin(2*PI/5)-sin(0))
@@ -25,8 +29,7 @@ variable G8_y equal ${c}*(sin(2*PI/5)-sin(8*PI/5))   # G8 e G18 sulle y
 variable G11_y equal ${c}*(sin(4*PI/5)-sin(6*PI/5))  # G11 e G15 sulle y
 # POTENTIAL AMP: 1e-07 is 0.1zJ
 variable g equal 0.1
-variable V0 equal v_g*2.0e-07*(5.80^2)
-# variable V0 equal 1.0e-7
+variable V0 equal v_g*v_k_coll*(5.80^2)
 variable pot_ext atom $(-2/25)*${V0}*(cos(${G1_x}*c_Getx+${G1_y}*c_Gety)+cos(${G1_x}*c_Getx-${G1_y}*c_Gety)&
 +cos(${G2_x}*c_Getx+${G2_y}*c_Gety)+cos(${G2_x}*c_Getx-${G2_y}*c_Gety)&
 +cos(${G6_x}*c_Getx+${G6_y}*c_Gety)+cos(${G6_x}*c_Getx-${G6_y}*c_Gety)&
@@ -44,16 +47,14 @@ variable Fy atom $(-2/25)*${V0}*(${G1_y}*(sin(${G1_x}*c_Getx+${G1_y}*c_Gety)-sin
 #---------- Forces --------------------------------------------------------------------------------#
 variable timest equal 50
 timestep	${timest}  # microseconds
-# displace_atoms all rotate 0.0 0.0 0.0 0.0 0.0 1.0 5.30542   # x y z (origin point) vx vy vz (rotation axis vector) angle
 fix subForce all addforce v_Fx v_Fy 0.0 energy v_pot_ext   # force field due to substrate potential
 fix_modify subForce energy yes
-variable F1s equal v_V0*4.279396/5.4
+variable F1s equal v_V0*4.279396/v_a_pot
 variable Forcefrac equal 0.3*v_F1s
 fix pullForce all addforce v_Forcefrac 0.0 0.0   # pulling force: fx fy fz
 #---------- Compute variables ---------------------------------------------------------------------#
 compute pot_e all pe
 compute kin_e all ke
-# compute bond_e all pe bond   # pot_e already includes bond energy
 variable etot equal c_pot_e+c_kin_e
 variable velox equal vcm(internal,x)
 variable veloy equal vcm(internal,y)
@@ -62,7 +63,7 @@ variable posity equal xcm(internal,y)
 variable tstep equal step
 variable real_time equal v_tstep*v_timest
 #---------- thermo outputs ------------------------------------------------------------------------#
-thermo_style custom step v_positx v_velox v_posity v_veloy   # step*${timestep}
+thermo_style custom step v_positx v_velox v_posity v_veloy
 thermo_modify format 2 %15.10g
 thermo_modify format 3 %15.10g
 thermo_modify format 4 %15.10g
@@ -75,7 +76,6 @@ fix 3 all langevin 0.0 0.0 5000 1    # fix ID group_ID langevin Tstart Tstop dam
 fix 4 internal nve
 fix frame external rigid single   # rigid performs nve sim; if used, only apply fix nve to internal
 fix posit_out all print 1000 "${tstep} ${real_time} ${positx} ${velox} ${posity} ${veloy}" file pos_vel.dat screen no
-# fix screenout all print 1000 "${tstep} ${real_time} ${positx} ${velox} ${posity} ${veloy}"
 run 200000
 write_data final_config.lmpdat
 write_restart friction.restart

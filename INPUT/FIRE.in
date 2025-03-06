@@ -5,12 +5,16 @@ atom_style bond
 bond_style harmonic
 boundary p p p
 read_data colloid.lmpdat
-bond_coeff 1 1.000000e-07 5.80    # <---- a_coll
+variable a_coll equal 5.80
+variable k_coll equal 2.0e-7
+variable k_lammps equal v_k_coll/2
+bond_coeff 1 ${k_lammps} ${a_coll}
 group internal type 1
 group external type 2
 compute Getx all property/atom x
 compute Gety all property/atom y
-variable c equal 2*PI/5.40       # <---- a_pot
+variable a_pot equal 5.40
+variable c equal 2*PI/v_a_pot
 #---------- Define G, V0, F -----------------------------------------------------------------------#
 variable G1_x equal ${c}*(cos(0)-cos(2*PI/5))   # i valori sono gli stessi per G1, G4, G5, G17
 variable G1_y equal ${c}*(sin(2*PI/5)-sin(0))
@@ -25,8 +29,7 @@ variable G8_y equal ${c}*(sin(2*PI/5)-sin(8*PI/5))   # G8 e G18 sulle y
 variable G11_y equal ${c}*(sin(4*PI/5)-sin(6*PI/5))  # G11 e G15 sulle y
 # ----- POTENTIAL AMP: 1e-07 is 0.1zJ ----- #
 variable g equal 0.1
-variable V0 equal v_g*2.0e-07*(5.80^2)
-# variable V0 equal 1.0e-7
+variable V0 equal v_g*v_k_coll*(v_a_coll^2)
 variable pot_ext atom $(-2/25)*${V0}*(cos(${G1_x}*c_Getx+${G1_y}*c_Gety)+cos(${G1_x}*c_Getx-${G1_y}*c_Gety)&
 +cos(${G2_x}*c_Getx+${G2_y}*c_Gety)+cos(${G2_x}*c_Getx-${G2_y}*c_Gety)&
 +cos(${G6_x}*c_Getx+${G6_y}*c_Gety)+cos(${G6_x}*c_Getx-${G6_y}*c_Gety)&
@@ -60,16 +63,8 @@ thermo_style custom step pe etotal
 thermo 50
 #---------- Dump compatible with ovito animations -------------------------------------------------#
 # dump 10000 all custom 100 dump_test_* id type xs ys zs vx vy vz
-#---------- Run -----------------------------------------------------------------------------------#
-# fix 3 all langevin 0.0 0.0 5000 1    # fix ID group_ID langevin Tstart Tstop damp seed
-# fix 4 internal nve
-# fix frame external rigid single   # rigid performs nve sim; if used, only apply fix nve to internal
-# write_data configuration_0.data
-# fix positx_out all print 1 "${tstep} ${etot}" file min.data screen no
-# fix screenout all print 1000 "${tstep} ${etot}"
-# run 1
-
-variable forceTolerance equal 1e-4*${V0}/5.4
+#---------- FIRE run ------------------------------------------------------------------------------#
+variable forceTolerance equal 1e-4*v_V0/v_a_pot
 min_style fire
 minimize 0.0 ${forceTolerance} 100000 100000
 # minimize 0.0 0.0 100000 100000

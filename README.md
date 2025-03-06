@@ -1,4 +1,4 @@
-This directory contains input files, scripts (and a few output files) used in Davide Gay's BSc thesis project
+This directory contains  LAMMPS input files, scripts (and a few output files) used in Davide Gay's BSc thesis project
 on studying static friction properties of a circular hexagonal lattice sample (2D) of colloidal particles
 interacting with a decagonal quasiperiodic substrate potential.
 Note that all code is written assuming a set ratio
@@ -26,3 +26,6 @@ Starts a new FRICTION run from the configuration resulting from another FRICTION
 (same g, but different force). Useful for increasing the force applied by small amounts,
 thus shortening transient phases.
 Usage: ‘source START_FROM_CONFIG.sh <g> <old_F/F_1s> <new_F/F_1s> <timesteps>’
+
+All scripts will put the resulting files in dedicated directories inside of
+CONFIG (for system configurations) and OUTPUT (for logs and data output).

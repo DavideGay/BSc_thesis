@@ -3,13 +3,23 @@
 # ARGUMENTS: g force timesteps   (force in units of F_1s)
 
 # create output directory, if not present
-cd OUTPUT/FRICTION
+cd OUTPUT
+DIR="FRICTION"
+if [ ! -d "$DIR" ]; then
+  mkdir "$DIR"
+fi
+cd FRICTION
 DIR="friction_$1"
 if [ ! -d "$DIR" ]; then
   mkdir "$DIR"
 fi
 cd ../..
-cd CONFIG/FRICTION
+cd CONFIG
+DIR="FRICTION"
+if [ ! -d "$DIR" ]; then
+  mkdir "$DIR"
+fi
+cd FRICTION
 DIR="friction_$1"
 if [ ! -d "$DIR" ]; then
   mkdir "$DIR"
@@ -35,10 +45,10 @@ mv SA_config_$1.lmpdat start_config.lmpdat
 
 cp INPUT/apply_force.in apply_force.in
 
-sed -i '' "27s/.*/variable g equal $1/" apply_force.in
+sed -i '' "31s/.*/variable g equal $1/" apply_force.in
 #sed -i '' "47s/.*/rotat .. $3/" apply_force.in
 
-sed -i '' "51s/.*/variable Forcefrac equal $2*v_F1s/" apply_force.in
+sed -i '' "53s/.*/variable Forcefrac equal $2*v_F1s/" apply_force.in
 sed -i '' "79s/.*/run $3/" apply_force.in
 
 echo "------------------------------------------------------------------------"
@@ -64,4 +74,4 @@ mv CONFIG/FRICTION/friction_$1/final_config.lmpdat CONFIG/FRICTION/friction_$1/f
 mv friction.restart friction_$2.restart
 mv friction_$2.restart CONFIG/FRICTION/friction_$1/restart/friction_$2.restart
 
-rm -f start_config.lmpdat apply_force.in
+rm -f start_config.lmpdat log.lammps apply_force.in
