@@ -25,13 +25,16 @@ echo "------------------------------------------------------------------------"
 
 lmp -in apply_force.in
 
-cp pos_vel.data OUTPUT/FRICTION/friction_$1/pos_vel.data
-mv OUTPUT/FRICTION/friction_$1/pos_vel.data OUTPUT/FRICTION/friction_$1/pos_vel_$3.data
+cp pos_vel.dat OUTPUT/FRICTION/friction_$1/pos_vel.dat
+mv OUTPUT/FRICTION/friction_$1/pos_vel.dat OUTPUT/FRICTION/friction_$1/pos_vel_$3.dat
 
 cp sim_log.lammps OUTPUT/FRICTION/friction_$1/logs/sim_log.lammps
 mv OUTPUT/FRICTION/friction_$1/logs/sim_log.lammps OUTPUT/FRICTION/friction_$1/logs/sim_log_$3.lammps
 
 cp final_config.lmpdat CONFIG/FRICTION/friction_$1/final_config.lmpdat
 mv CONFIG/FRICTION/friction_$1/final_config.lmpdat CONFIG/FRICTION/friction_$1/final_config_$3.lmpdat
+
+mv friction.restart friction_$3.restart
+mv friction_$3.restart CONFIG/FRICTION/friction_$1/restart/friction_$3.restart
 
 rm -f start_config.lmpdat apply_force.in
