@@ -3,9 +3,10 @@
 This directory contains  LAMMPS input files, scripts (and a few output files) used in Davide Gay's BSc thesis project
 on studying static friction properties of a circular hexagonal lattice sample (2D) of colloidal particles
 interacting with a decagonal quasiperiodic substrate potential.
-Note that a set ratio of $a_{pot}/a_{coll} = 5.4/5.8$ is assumed, which corresponds to a Novaco angle of about 5.305°.
+Note that a set ratio of $a_{pot}/a_{coll} = 5.4/5.8$, which corresponds to a Novaco angle of about 5.305°.
 If you wish to run simulations with different parameters - or if you want to implement
 a different intercolloidal potential - be sure to update the input files accordingly.
+The input configuration provided here consists of a sample of 9407 particles.
 
 Here follow brief explanations on how to use the scripts:
 - `FIRE_run.sh`:
@@ -28,5 +29,5 @@ Starts a new FRICTION run from the configuration resulting from another FRICTION
 thus shortening transient phases.
 Usage: `source FRICTION_run.sh g_value old_F/F_1s new_F/F_1s timesteps`.
 
-All scripts will put the resulting files in dedicated directories inside of
-CONFIG (for system configurations) and OUTPUT (for logs and data output).
+All scripts will put the resulting files in dedicated directories inside of `CONFIG`
+(for system configurations) and `OUTPUT` (for logs and data output).
