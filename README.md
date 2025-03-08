@@ -3,7 +3,7 @@
 This directory contains  LAMMPS input files, scripts (and a few output files) used in Davide Gay's BSc thesis project
 on studying static friction properties of a circular hexagonal lattice sample (2D) of colloidal particles
 interacting with a decagonal quasiperiodic substrate potential.
-Note that a set ratio of $a_{pot}/a_{coll} = 5.4/5.8$, which corresponds to a Novaco angle of about 5.305°.
+Note that a set ratio of $a_{pot}/a_{coll} = 5.4/5.8$ is used, which corresponds to a Novaco angle of about 5.305°.
 If you wish to run simulations with different parameters - or if you want to implement
 a different intercolloidal potential - be sure to update the input files accordingly.
 The input configuration provided here consists of a sample of 9407 particles.
