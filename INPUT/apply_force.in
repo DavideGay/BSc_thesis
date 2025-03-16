@@ -55,6 +55,7 @@ fix pullForce all addforce v_Forcefrac 0.0 0.0   # pulling force: fx fy fz
 #---------- Compute variables ---------------------------------------------------------------------#
 compute pot_e all pe
 compute kin_e all ke
+variable kin_part equal c_kin_e/atoms   # kinetic energy per particle
 variable etot equal c_pot_e+c_kin_e
 variable velox equal vcm(internal,x)
 variable veloy equal vcm(internal,y)
@@ -76,6 +77,7 @@ fix 3 all langevin 0.0 0.0 5000 1    # fix ID group_ID langevin Tstart Tstop dam
 fix 4 internal nve
 fix frame external rigid single   # rigid performs nve sim; if used, only apply fix nve to internal
 fix posit_out all print 1000 "${tstep} ${real_time} ${positx} ${velox} ${posity} ${veloy}" file pos_vel.dat screen no
+fix 10 all halt 2000 v_kin_part < 1e-19   # stops run when kin_en/part < 1e-20 (checks every 2000 steps)
 run 200000
 write_data final_config.lmpdat
 write_restart friction.restart

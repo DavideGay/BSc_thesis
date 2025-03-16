@@ -23,7 +23,7 @@ cd ..
 cp INPUT/simulated_annealing.in simulated_annealing.in
 
 
-sed -i '' "31s/.*/variable g equal $1/" simulated_annealing.in
+sed -i '' "s@variable g equal .*@variable g equal $1@g" simulated_annealing.in
 
 lmp -in simulated_annealing.in
 

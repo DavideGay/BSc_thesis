@@ -44,11 +44,10 @@ mv sim_log_$2.lammps sim_log.lammps
 
 cp INPUT/apply_force_restart.in apply_force_restart.in
 
-sed -i '' "22s/.*/variable g equal $1/" apply_force_restart.in
+sed -i '' "s@variable g equal .*@variable g equal $1@g" apply_force_restart.in
 
-sed -i '' "44s/.*/variable Forcefrac equal $2*v_F1s/" apply_force_restart.in
-
-sed -i '' "70s/.*/run $3/" apply_force_restart.in
+sed -i '' "s@variable Forcefrac equal .*@variable Forcefrac equal $2*v_F1s@g" apply_force_restart.in
+sed -i '' "s@run .*@run $3@g" apply_force_restart.in
 
 echo "------------------------------------------------------------------------"
 echo " "

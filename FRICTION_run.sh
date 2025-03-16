@@ -45,15 +45,14 @@ mv SA_config_$1.lmpdat start_config.lmpdat
 
 cp INPUT/apply_force.in apply_force.in
 
-sed -i '' "31s/.*/variable g equal $1/" apply_force.in
-#sed -i '' "47s/.*/rotat .. $3/" apply_force.in
+sed -i '' "s@variable g equal .*@variable g equal $1@g" apply_force.in
 
-sed -i '' "53s/.*/variable Forcefrac equal $2*v_F1s/" apply_force.in
-sed -i '' "79s/.*/run $3/" apply_force.in
+sed -i '' "s@variable Forcefrac equal .*@variable Forcefrac equal $2*v_F1s@g" apply_force.in
+sed -i '' "s@run .*@run $3@g" apply_force.in
 
 echo "------------------------------------------------------------------------"
 echo " "
-echo "g = $1"
+echo "FRICTION simulation: g = $1"
 echo " "
 echo "Using force: F = $2 F_1s"
 echo "$3 simulation steps"

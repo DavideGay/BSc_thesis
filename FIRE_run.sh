@@ -24,7 +24,7 @@ cd ..
 cp INPUT/FIRE.in FIRE.in
 
 
-sed -i '' "31s/.*/variable g equal $1/" FIRE.in
+sed -i '' "s@variable g equal .*@variable g equal $1@g" FIRE.in
 
 lmp -in FIRE.in
 
