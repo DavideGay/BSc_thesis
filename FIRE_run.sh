@@ -26,6 +26,12 @@ cp INPUT/FIRE.in FIRE.in
 
 sed -i '' "s@variable g equal .*@variable g equal $1@g" FIRE.in
 
+echo "------------------------------------------------------------------------"
+echo " "
+echo "FIRE minimization: g = $1"
+echo " "
+echo "------------------------------------------------------------------------"
+
 lmp -in FIRE.in
 
 mv FIRE_log.lammps OUTPUT/FIRE/logs/FIRE_log.lammps

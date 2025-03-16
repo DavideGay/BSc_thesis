@@ -51,7 +51,7 @@ sed -i '' "s@run .*@run $3@g" apply_force_restart.in
 
 echo "------------------------------------------------------------------------"
 echo " "
-echo "g = $1"
+echo "FRICTION simulation: g = $1"
 echo " "
 echo "Using force: F = $2 F_1s"
 echo "$3 simulation steps. Restarted run."

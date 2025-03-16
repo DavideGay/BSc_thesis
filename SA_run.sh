@@ -25,6 +25,12 @@ cp INPUT/simulated_annealing.in simulated_annealing.in
 
 sed -i '' "s@variable g equal .*@variable g equal $1@g" simulated_annealing.in
 
+echo "------------------------------------------------------------------------"
+echo " "
+echo "Simulated Annealing: g = $1"
+echo " "
+echo "------------------------------------------------------------------------"
+
 lmp -in simulated_annealing.in
 
 mv SA_log.lammps OUTPUT/SA/logs/SA_log.lammps
