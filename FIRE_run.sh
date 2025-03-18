@@ -5,16 +5,17 @@ if [[ -z "$1" ]]; then
     exit 1
 fi
 
+g_value="$1"
 
 cp input/colloid.lmpdat colloid.lmpdat
 
 cp input/FIRE.in FIRE.in
 
-sed -i '' "s@variable g equal .*@variable g equal $1@g" FIRE.in
+sed -i '' "s@variable g equal .*@variable g equal $g_value@g" FIRE.in
 
 echo "------------------------------------------------------------------------"
 echo " "
-echo "FIRE minimization: g = $1"
+echo "FIRE minimization: g = $g_value"
 echo " "
 echo "------------------------------------------------------------------------"
 
@@ -42,7 +43,7 @@ for i in "${!FILES[@]}"; do
       filename="${file%.*}"  # Extract filename
       extension="${file##*.}"  # Extract extension
 
-      new_name="${filename}_$1.${extension}"   # Rename with g value
+      new_name="${filename}_$g_value.${extension}"   # Rename with g value
 
       mv "$file" "${destination}${new_name}"
 
