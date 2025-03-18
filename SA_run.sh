@@ -1,27 +1,15 @@
 #!/bin/bash
 
-cp INPUT/colloid.lmpdat colloid.lmpdat
-
-cd OUTPUT
-DIR="SA"
-if [ ! -d "$DIR" ]; then
-  mkdir "$DIR"
+# Usage:
+if [[ -z "$1" ]]; then
+    echo "Usage: $0 <g>"
+    exit 1
 fi
-cd SA
-DIR="logs"
-if [ ! -d "$DIR" ]; then
-  mkdir "$DIR"
-fi
-cd ../..
-cd CONFIG
-DIR="SA"
-if [ ! -d "$DIR" ]; then
-  mkdir "$DIR"
-fi
-cd ..
 
-cp INPUT/simulated_annealing.in simulated_annealing.in
 
+cp input/colloid.lmpdat colloid.lmpdat
+
+cp input/simulated_annealing.in simulated_annealing.in
 
 sed -i '' "s@variable g equal .*@variable g equal $1@g" simulated_annealing.in
 
@@ -33,13 +21,36 @@ echo "------------------------------------------------------------------------"
 
 lmp -in simulated_annealing.in
 
-mv SA_log.lammps OUTPUT/SA/logs/SA_log.lammps
-mv OUTPUT/SA/logs/SA_log.lammps OUTPUT/SA/logs/SA_log_$1.lammps
+# Declare files and their corresponding destination folders
+FILES=(
+    "SA_config.lmpdat"
+    "SA_log.lammps"
+)
 
+# Corresponding destination folders
+DESTINATIONS=(
+    "config/sim_ann/"
+    "output/sim_ann/"
+)
 
-# export (final) configurations as min_config_$g.lmpdat in appropriate folder
-mv final_config.lmpdat CONFIG/SA/final_config.lmpdat
-mv CONFIG/SA/final_config.lmpdat CONFIG/SA/SA_config_$1.lmpdat
+for i in "${!FILES[@]}"; do
+    file="${FILES[$i]}"
+    destination="${DESTINATIONS[$i]}"
+
+    mkdir -p "$destination"
+
+    if [[ -f "$file" ]]; then
+      filename="${file%.*}"  # Extract filename
+      extension="${file##*.}"  # Extract extension
+
+      new_name="${filename}_$1.${extension}"   # Rename with g value
+
+      mv "$file" "${destination}${new_name}"
+
+    else
+        echo "Warning: $file not found!"
+    fi
+done
 
 
 rm -f colloid.lmpdat simulated_annealing.in log.lammps

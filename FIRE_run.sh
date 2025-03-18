@@ -1,28 +1,14 @@
 #!/bin/bash
 
-cp INPUT/colloid.lmpdat colloid.lmpdat
-
-cd OUTPUT
-DIR="FIRE"
-if [ ! -d "$DIR" ]; then
-  mkdir "$DIR"
+if [[ -z "$1" ]]; then
+    echo "Usage: $0 <g>"
+    exit 1
 fi
-cd FIRE
-DIR="logs"
-if [ ! -d "$DIR" ]; then
-  mkdir "$DIR"
-fi
-cd ../..
 
-cd CONFIG
-DIR="FIRE"
-if [ ! -d "$DIR" ]; then
-  mkdir "$DIR"
-fi
-cd ..
 
-cp INPUT/FIRE.in FIRE.in
+cp input/colloid.lmpdat colloid.lmpdat
 
+cp input/FIRE.in FIRE.in
 
 sed -i '' "s@variable g equal .*@variable g equal $1@g" FIRE.in
 
@@ -34,11 +20,36 @@ echo "------------------------------------------------------------------------"
 
 lmp -in FIRE.in
 
-mv FIRE_log.lammps OUTPUT/FIRE/logs/FIRE_log.lammps
-mv OUTPUT/FIRE/logs/FIRE_log.lammps OUTPUT/FIRE/logs/FIRE_log_$1.lammps
+# Declare files and their corresponding destination folders
+FILES=(
+    "FIRE_config.lmpdat"
+    "FIRE_log.lammps"
+)
 
-mv FIRE_config.lmpdat CONFIG/FIRE/FIRE_config.lmpdat
-mv CONFIG/FIRE/FIRE_config.lmpdat CONFIG/FIRE/FIRE_config_$1.lmpdat
+# Corresponding destination folders
+DESTINATIONS=(
+    "config/fire/"
+    "output/fire/"
+)
+
+for i in "${!FILES[@]}"; do
+    file="${FILES[$i]}"
+    destination="${DESTINATIONS[$i]}"
+
+    mkdir -p "$destination"
+
+    if [[ -f "$file" ]]; then
+      filename="${file%.*}"  # Extract filename
+      extension="${file##*.}"  # Extract extension
+
+      new_name="${filename}_$1.${extension}"   # Rename with g value
+
+      mv "$file" "${destination}${new_name}"
+
+    else
+        echo "Warning: $file not found!"
+    fi
+done
 
 
 rm -f colloid.lmpdat log.lammps FIRE.in

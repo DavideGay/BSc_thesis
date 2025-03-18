@@ -11,23 +11,23 @@ The input configuration provided here consists of a sample of 9407 particles.
 Here follow brief explanations on how to use the scripts:
 - `FIRE_run.sh`:
 Performs FIRE minimization from the ideal lattice configuration, after rotating the sample by the Novaco angle.
-Usage: `source FIRE_run.sh g_value` with the desired value of g.
+Usage: `bash FIRE_run.sh g_value` with the desired value of g.
 - `SA_run.sh`:
 Performs Simulated Annealing from the ideal lattice configuration, after rotating the sample by the Novaco angle.
-Usage: `source FIRE_run.sh g_value`.
+Usage: `bash FIRE_run.sh g_value`.
 Check comments in simulated_annealing.in for details on the annealing schedule.
 - `FRICTION_run.sh`:
 Simulates a constant driving force F along the x axis applied to all particles,
 starting from an annealed configuration.
-Usage: `source FRICTION_run.sh g_value F/F_1s timesteps` with the desired value of force and integration steps.
+Usage: `bash FRICTION_run.sh g_value F/F_1s timesteps` with the desired value of force and integration steps.
 - `RESTART.sh`:
 Allows to resume a previously ended FRICTION run.
-Usage:`source RESTART.sh g_value F/F_1s timesteps`.
+Usage:`bash RESTART.sh g_value F/F_1s timesteps`.
 - `START_FROM_CONFIG.sh`:
 Starts a new FRICTION run from the configuration resulting from another FRICTION run
 (same g, but different force). Useful for increasing the force applied by small amounts,
 thus shortening transient phases.
-Usage: `source FRICTION_run.sh g_value old_F/F_1s new_F/F_1s timesteps`.
+Usage: `bash FRICTION_run.sh g_value old_F/F_1s new_F/F_1s timesteps`.
 
 All scripts will put the resulting files in dedicated directories inside of `CONFIG`
 (for system configurations) and `OUTPUT` (for logs and data output).

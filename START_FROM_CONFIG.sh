@@ -1,39 +1,69 @@
 #!/bin/bash
 
-# ARGUMENTS: g f_old f_new ts
+if [ $# -ne 4 ]; then
+    echo "Usage: $0 <g> <old_force> <new_force> <steps>"
+    exit 1
+fi
 
-cp CONFIG/FRICTION/friction_$1/final_config_$2.lmpdat final_config_$2.lmpdat
-mv final_config_$2.lmpdat start_config.lmpdat
+g_value="$1"
+old_force="$2"
+force="$3"
+steps="$4"
 
 
-cp INPUT/apply_force.in apply_force.in
+cp config/friction/friction_$g_value/final_config_$old_force.lmpdat final_config_$old_force.lmpdat
+mv final_config_$old_force.lmpdat start_config.lmpdat
 
-sed -i '' "s@variable g equal .*@variable g equal $1@g" apply_force.in
+cp input/apply_force.in apply_force.in
 
-sed -i '' "s@variable Forcefrac equal .*@variable Forcefrac equal $3*v_F1s@g" apply_force.in
-sed -i '' "s@run .*@run $4@g" apply_force.in
+sed -i '' "s@variable g equal .*@variable g equal $g_value@g" apply_force.in
+
+sed -i '' "s@variable Forcefrac equal .*@variable Forcefrac equal $force*v_F1s@g" apply_force.in
+sed -i '' "s@run .*@run $steps@g" apply_force.in
 
 echo "------------------------------------------------------------------------"
 echo " "
-echo "FRICTION simulation: g = $1"
+echo "FRICTION simulation: g = $g_value"
 echo " "
-echo "Using force: F = $3 F_1s from $2 config"
-echo "$4 simulation steps"
+echo "Using force: F = $force F_1s from $old_force config"
+echo "$steps simulation steps"
 echo " "
 echo "------------------------------------------------------------------------"
 
 lmp -in apply_force.in
 
-cp pos_vel.dat OUTPUT/FRICTION/friction_$1/pos_vel.dat
-mv OUTPUT/FRICTION/friction_$1/pos_vel.dat OUTPUT/FRICTION/friction_$1/pos_vel_$3.dat
+# Declare files and their corresponding destination folders
+FILES=(
+    "final_config.lmpdat"
+    "pos_vel.dat"
+    "sim_log.lammps"
+    "friction.restart"
+)
+# Corresponding destination folders
+DESTINATIONS=(
+    "config/friction/friction_$g_value/"
+    "output/friction/friction_$g_value/"
+    "output/friction/friction_$g_value/logs/"
+    "config/friction/friction_$g_value/restart/"
+)
 
-cp sim_log.lammps OUTPUT/FRICTION/friction_$1/logs/sim_log.lammps
-mv OUTPUT/FRICTION/friction_$1/logs/sim_log.lammps OUTPUT/FRICTION/friction_$1/logs/sim_log_$3.lammps
+for i in "${!FILES[@]}"; do
+    file="${FILES[$i]}"
+    destination="${DESTINATIONS[$i]}"
 
-cp final_config.lmpdat CONFIG/FRICTION/friction_$1/final_config.lmpdat
-mv CONFIG/FRICTION/friction_$1/final_config.lmpdat CONFIG/FRICTION/friction_$1/final_config_$3.lmpdat
+    mkdir -p "$destination"
 
-mv friction.restart friction_$3.restart
-mv friction_$3.restart CONFIG/FRICTION/friction_$1/restart/friction_$3.restart
+    if [[ -f "$file" ]]; then
+      filename="${file%.*}"  # Extract filename
+      extension="${file##*.}"  # Extract extension
+
+      new_name="${filename}_$force.${extension}"
+
+      mv "$file" "${destination}${new_name}"
+
+    else
+        echo "Warning: $file not found!"
+    fi
+done
 
 rm -f start_config.lmpdat log.lammps apply_force.in

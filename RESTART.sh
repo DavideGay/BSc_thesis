@@ -1,48 +1,40 @@
 #!/bin/bash
 
-# ARGUMENTS: g frac ts
-
-cd OUTPUT/FRICTION/friction_$1
-DIR="backup"
-if [ ! -d "$DIR" ]; then
-  mkdir "$DIR"
+if [ $# -ne 3 ]; then
+    echo "Usage: $0 <g> <force> <steps>"
+    exit 1
 fi
-cd logs
-if [ ! -d "$DIR" ]; then
-  mkdir "$DIR"
-fi
-cd ../../../..
 
-cd CONFIG/FRICTION/friction_$1
-if [ ! -d "$DIR" ]; then
-  mkdir "$DIR"
-fi
-cd restart
-if [ ! -d "$DIR" ]; then
-  mkdir "$DIR"
-fi
-cd ../../../..
+# ---  BACKUP ---
+FILES=(
+    "final_config_$2.lmpdat"
+    "friction_$2.restart"
+    "pos_vel_$2.dat"
+    "sim_log_$2.lammps"
+)
+FOLDERS=(
+    "config/friction/friction_$1/"
+    "config/friction/friction_$1/restart/"
+    "output/friction/friction_$1/"
+    "output/friction/friction_$1/logs/"
+)
+for i in "${!FILES[@]}"; do
+    file="${FILES[$i]}"
+    folder="${FOLDERS[$i]}"
+    mkdir -p "${folder}backup/"
 
-# CONFIG
-cp CONFIG/FRICTION/friction_$1/final_config_$2.lmpdat CONFIG/FRICTION/friction_$1/backup/final_config_$2.lmpdat
+    if [[ -f "${folder}${file}" ]]; then
+      cp "${folder}${file}" "${folder}backup/${file}"
+    else
+        echo "Warning: $file not found!"
+    fi
+done
 
-# RESTART FILE
-cp CONFIG/FRICTION/friction_$1/restart/friction_$2.restart CONFIG/FRICTION/friction_$1/restart/backup/friction_$2.restart
-cp CONFIG/FRICTION/friction_$1/restart/friction_$2.restart friction_$2.restart
+cp config/friction/friction_$1/restart/friction_$2.restart friction_$2.restart
 mv friction_$2.restart friction.restart
-
-# .DAT
-cp OUTPUT/FRICTION/friction_$1/pos_vel_$2.dat OUTPUT/FRICTION/friction_$1/backup/pos_vel_$2.dat
-cp OUTPUT/FRICTION/friction_$1/pos_vel_$2.dat pos_vel_$2.dat
-mv pos_vel_$2.dat pos_vel.dat
-
-# LOG
-cp OUTPUT/FRICTION/friction_$1/logs/sim_log_$2.lammps OUTPUT/FRICTION/friction_$1/logs/backup/sim_log_$2.lammps
-cp OUTPUT/FRICTION/friction_$1/logs/sim_log_$2.lammps sim_log_$2.lammps
+cp output/friction/friction_$1/logs/sim_log_$2.lammps sim_log_$2.lammps
 mv sim_log_$2.lammps sim_log.lammps
-
-
-cp INPUT/apply_force_restart.in apply_force_restart.in
+cp input/apply_force_restart.in apply_force_restart.in
 
 sed -i '' "s@variable g equal .*@variable g equal $1@g" apply_force_restart.in
 
@@ -60,16 +52,36 @@ echo "------------------------------------------------------------------------"
 
 lmp -in apply_force_restart.in
 
-cp pos_vel.dat OUTPUT/FRICTION/friction_$1/pos_vel.dat
-mv OUTPUT/FRICTION/friction_$1/pos_vel.dat OUTPUT/FRICTION/friction_$1/pos_vel_$2.dat
+FILES=(
+    "final_config.lmpdat"
+    "pos_vel.dat"
+    "sim_log.lammps"
+    "friction.restart"
+)
 
-cp sim_log.lammps OUTPUT/FRICTION/friction_$1/logs/sim_log.lammps
-mv OUTPUT/FRICTION/friction_$1/logs/sim_log.lammps OUTPUT/FRICTION/friction_$1/logs/sim_log_$2.lammps
+DESTINATIONS=(
+    "config/friction/friction_$1/"
+    "output/friction/friction_$1/"
+    "output/friction/friction_$1/logs/"
+    "output/friction/friction_$1/restart/"
+)
 
-cp final_config.lmpdat CONFIG/FRICTION/friction_$1/final_config.lmpdat
-mv CONFIG/FRICTION/friction_$1/final_config.lmpdat CONFIG/FRICTION/friction_$1/final_config_$2.lmpdat
+for i in "${!FILES[@]}"; do
+    file="${FILES[$i]}"
+    destination="${DESTINATIONS[$i]}"
+    mkdir -p "$destination"
 
-mv friction.restart friction_$2.restart
-mv friction_$2.restart CONFIG/FRICTION/friction_$1/restart/friction_$2.restart
+    if [[ -f "$file" ]]; then
+      filename="${file%.*}"  # Extract filename
+      extension="${file##*.}"  # Extract extension
+      new_name="${filename}_$2.${extension}"
+
+      mv "$file" "${destination}${new_name}"
+
+    else
+        echo "Warning: $file not found!"
+    fi
+done
+
 
 rm -f apply_force_restart.in log.lammps

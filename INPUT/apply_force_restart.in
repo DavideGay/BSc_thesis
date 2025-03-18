@@ -68,7 +68,7 @@ fix 3 all langevin 0.0 0.0 5000 1    # fix ID group_ID langevin Tstart Tstop dam
 fix 4 internal nve
 fix frame external rigid single   # rigid performs nve sim; if used, only apply fix nve to internal
 fix posit_out all print 1000 "${tstep} ${real_time} ${positx} ${velox} ${posity} ${veloy}" append pos_vel.dat screen no
-fix 10 all halt 2000 v_kin_part < 1e-19   # stops run when kin_en/part < 1e-20 (checks every 2000 steps)
+fix 10 all halt 2000 v_kin_part < 1e-17   # stops run when kin_en/part/g < 1e-20 (checks every 2000 steps)
 run 100000
 write_data final_config.lmpdat
 write_restart friction.restart
