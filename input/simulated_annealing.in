@@ -96,7 +96,7 @@ variable forceTolerance equal 1e-4*v_V0/v_a_pot   # can choose stopping threshol
 min_style fire
 minimize 0.0 ${forceTolerance} 100000 100000
 # minimize 0.0 0.0 100000 100000
-write_data final_config.lmpdat
+write_data SA_config.lmpdat
 
 
 # SIMULATED ANNEALING
