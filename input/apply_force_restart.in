@@ -38,6 +38,7 @@ variable Fy atom $(-2/25)*${V0}*(${G1_y}*(sin(${G1_x}*c_Getx+${G1_y}*c_Gety)-sin
 #---------- Forces --------------------------------------------------------------------------------#
 variable timest equal 50
 timestep	${timest}  # microseconds
+# reset_timestep 0
 fix subForce all addforce v_Fx v_Fy 0.0 energy v_pot_ext   # force field due to substrate potential
 fix_modify subForce energy yes
 variable F1s equal v_V0*4.279396/v_a_pot

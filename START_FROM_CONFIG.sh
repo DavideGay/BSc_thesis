@@ -10,16 +10,17 @@ old_force="$2"
 force="$3"
 steps="$4"
 
+cp config/friction/friction_$g_value/restart/friction_$old_force.restart friction_$old_force.restart
+mv friction_$old_force.restart friction.restart
 
-cp config/friction/friction_$g_value/final_config_$old_force.lmpdat final_config_$old_force.lmpdat
-mv final_config_$old_force.lmpdat start_config.lmpdat
+cp input/apply_force_restart.in apply_force_restart.in
 
-cp input/apply_force.in apply_force.in
+sed -i '' "s@variable g equal .*@variable g equal $g_value@g" apply_force_restart.in
 
-sed -i '' "s@variable g equal .*@variable g equal $g_value@g" apply_force.in
+sed -i '' "s@# reset_timestep 0@reset_timestep 0@g" apply_force_restart.in
 
-sed -i '' "s@variable Forcefrac equal .*@variable Forcefrac equal $force*v_F1s@g" apply_force.in
-sed -i '' "s@run .*@run $steps@g" apply_force.in
+sed -i '' "s@variable Forcefrac equal .*@variable Forcefrac equal $force*v_F1s@g" apply_force_restart.in
+sed -i '' "s@run .*@run $steps@g" apply_force_restart.in
 
 echo "------------------------------------------------------------------------"
 echo " "
@@ -30,7 +31,7 @@ echo "$steps simulation steps"
 echo " "
 echo "------------------------------------------------------------------------"
 
-lmp -in apply_force.in
+lmp -in apply_force_restart.in
 
 # Declare files and their corresponding destination folders
 FILES=(
@@ -66,4 +67,4 @@ for i in "${!FILES[@]}"; do
     fi
 done
 
-rm -f start_config.lmpdat log.lammps apply_force.in
+rm -f log.lammps apply_force_restart.in   # start_config.lmpdat
