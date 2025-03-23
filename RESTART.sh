@@ -34,6 +34,8 @@ for i in "${!FILES[@]}"; do
     fi
 done
 
+mv pos_vel_$force.dat pos_vel.dat
+
 cp config/friction/friction_$g_value/restart/friction_$force.restart friction_$force.restart
 mv friction_$force.restart friction.restart
 cp output/friction/friction_$g_value/logs/sim_log_$force.lammps sim_log_$force.lammps
@@ -67,7 +69,7 @@ DESTINATIONS=(
     "config/friction/friction_$g_value/"
     "output/friction/friction_$g_value/"
     "output/friction/friction_$g_value/logs/"
-    "output/friction/friction_$g_value/restart/"
+    "config/friction/friction_$g_value/restart/"
 )
 
 for i in "${!FILES[@]}"; do
