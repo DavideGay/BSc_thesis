@@ -34,6 +34,7 @@ for i in "${!FILES[@]}"; do
     fi
 done
 
+cp output/friction/friction_$g_value/pos_vel_$force.dat pos_vel_$force.dat
 mv pos_vel_$force.dat pos_vel.dat
 
 cp config/friction/friction_$g_value/restart/friction_$force.restart friction_$force.restart
